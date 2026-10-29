@@ -787,8 +787,8 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   function drift(el, n, d) {
     if (calm || !el.animate) return;
     var seed = function (k) { var v = Math.sin(n * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); };
-    var ax = 50 + seed(1) * 70 + d * 60, ay = 40 + seed(2) * 60 + d * 50;
-    var dur = (34 + seed(3) * 36) * 1000;
+    var ax = 100 + seed(1) * 120 + d * 80, ay = 80 + seed(2) * 90 + d * 70;
+    var dur = (18 + seed(3) * 16) * 1000;
     var k = seed(4) > 0.5 ? 2 : 1;
     var p1 = seed(5) * 6.283, p2 = seed(6) * 6.283;
     var N = 48, frames = [];
