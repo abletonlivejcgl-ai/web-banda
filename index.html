@@ -120,7 +120,6 @@ h1 {
 .track[data-row="kick"] .step[aria-pressed="true"] { background: var(--r-kick); }
 .track[data-row="snare"] .step[aria-pressed="true"] { background: var(--r-snare); }
 .track[data-row="hat"] .step[aria-pressed="true"] { background: var(--r-hat); }
-.track[data-row="bass"] .step[aria-pressed="true"] { background: var(--r-bass); }
 .step.now { box-shadow: inset 0 0 0 2px var(--fg); }
 .seq.thump { animation: thump 0.35s ease-out; }
 @keyframes thump {
@@ -852,10 +851,8 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   var ROWS = [
     { id: 'kick',  label: 'Bombo',  on: [0, 4, 8, 12] },
     { id: 'snare', label: 'Caja',   on: [4, 12] },
-    { id: 'hat',   label: 'Hi-hat', on: [2, 6, 10, 14, 15] },
-    { id: 'bass',  label: 'Bajo',   on: [0, 3, 6, 8, 11, 14] }
+    { id: 'hat',   label: 'Hi-hat', on: [2, 6, 10, 14, 15] }
   ];
-  var NOTES = [55, 55, 55, 65.41, 55, 55, 82.41, 55, 55, 55, 73.42, 55, 55, 65.41, 82.41, 98];
   var BASE_BPM = 112;
   var grid = [], cells = [];
   var ctx = null, master = null, noiseBuf = null;
@@ -964,19 +961,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     o.start(t); o.stop(t + 0.12);
   }
   function hat(t) { noise(t, 0.05, 7500, 0.28); }
-  function bass(t, step) {
-    var o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
-    o.type = 'sawtooth';
-    o.frequency.value = NOTES[step];
-    f.type = 'lowpass'; f.Q.value = 6;
-    f.frequency.setValueAtTime(1400, t);
-    f.frequency.exponentialRampToValueAtTime(220, t + 0.16);
-    g.gain.setValueAtTime(0.34, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-    o.connect(f); f.connect(g); g.connect(master);
-    o.start(t); o.stop(t + 0.22);
-  }
-  var VOICES = [kick, snare, hat, bass];
+  var VOICES = [kick, snare, hat];
 
   function schedule() {
     while (next < ctx.currentTime + 0.12) {
@@ -1002,12 +987,11 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     void el.offsetWidth;
     el.classList.add(cls);
   }
-  // 0 bombo → título, 1 caja → destello de fondo, 2 hi-hat → puntos del menú, 3 bajo → tarjeta del ritmo
+  // 0 bombo → título, 1 caja → destello de fondo, 2 hi-hat → puntos del menú
   var DANCE = [
     function () { pulse(titleEl, 'p-kick'); pulse(farEl, 'p-kick'); },
     function () { pulse(flashEl, 'go'); },
-    function () { pulse(navEl, 'p-hat'); },
-    function () { pulse(seqEl, 'thump'); }
+    function () { pulse(navEl, 'p-hat'); }
   ];
   function draw() {
     if (!playing) return;
@@ -1352,12 +1336,12 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       x.fillStyle = cv('--soft');
       wrap(x, t.tag, W - 2 * M).forEach(function (l) { x.fillText(l, M, y); y += 66; });
 
-      var rows = [[0, 4, 8, 12], [4, 12], [2, 6, 10, 14, 15], [0, 3, 6, 8, 11, 14]];
+      var rows = [[0, 4, 8, 12], [4, 12], [2, 6, 10, 14, 15]];
       var cell = 46, gap = 10, gy = 1240;
       rows.forEach(function (on, r) {
         for (var i = 0; i < 16; i++) {
           rr(x, M + i * (cell + gap), gy + r * (cell + gap), cell, cell, 9);
-          x.fillStyle = on.indexOf(i) > -1 ? cv(['--r-kick', '--r-snare', '--r-hat', '--r-bass'][r]) : cv('--raise');
+          x.fillStyle = on.indexOf(i) > -1 ? cv(['--r-kick', '--r-snare', '--r-hat'][r]) : cv('--raise');
           x.fill();
         }
       });
