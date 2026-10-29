@@ -396,13 +396,13 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   <header class="top">
     <a class="logo" href="#" aria-label="Meigo Groove, ir al principio"><svg class="logo-m" xmlns="http://www.w3.org/2000/svg" viewBox="19.5 40.2 161 119.6" aria-hidden="true" focusable="false"><defs><clipPath id="mclip"><rect x="26.9" y="22" width="146.2" height="108.57700466931303"/></clipPath></defs><g transform="translate(-10.13 15.98) scale(1.1013)"><g clip-path="url(#mclip)"><polygon points="31.90,260.00 31.90,-89.95 100.00,40.06 168.10,-89.95 168.10,260.00 161.90,260.00 161.90,-64.75 100.00,53.42 38.10,-64.75 38.10,260.00" fill="#E5392F" stroke="#E5392F" stroke-width="0.5" stroke-linejoin="round"/><polygon points="40.30,260.00 40.30,-55.81 100.00,58.16 159.70,-55.81 159.70,260.00 153.50,260.00 153.50,-30.61 100.00,71.53 46.50,-30.61 46.50,260.00" fill="#EE7A2C" stroke="#EE7A2C" stroke-width="0.5" stroke-linejoin="round"/><polygon points="48.70,260.00 48.70,-21.67 100.00,76.27 151.30,-21.67 151.30,260.00 145.10,260.00 145.10,3.53 100.00,89.63 54.90,3.53 54.90,260.00" fill="#F2B134" stroke="#F2B134" stroke-width="0.5" stroke-linejoin="round"/><polygon points="57.10,260.00 57.10,12.47 100.00,94.37 142.90,12.47 142.90,260.00 136.70,260.00 136.70,37.67 100.00,107.73 63.30,37.67 63.30,260.00" fill="#F7E3BC" stroke="#F7E3BC" stroke-width="0.5" stroke-linejoin="round"/><polygon points="65.50,260.00 65.50,46.61 100.00,112.47 134.50,46.61 134.50,260.00 128.30,260.00 128.30,71.81 100.00,125.84 71.70,71.81 71.70,260.00" fill="#4FB8BA" stroke="#4FB8BA" stroke-width="0.5" stroke-linejoin="round"/><polygon points="73.90,260.00 73.90,80.75 100.00,130.58 126.10,80.75 126.10,260.00 119.90,260.00 119.90,105.95 100.00,143.94 80.10,105.95 80.10,260.00" fill="#2E6E8C" stroke="#2E6E8C" stroke-width="0.5" stroke-linejoin="round"/></g></g></svg><span>Meigo Groove</span></a>
     <nav aria-label="Secciones">
-      <a href="#comunidad">Comunidad</a>
       <a href="#videos">Vídeos</a>
       <a href="#test">Test</a>
-      <a href="#banda" hidden>La banda</a>
       <a href="#participa">Participa</a>
-      <a href="#directos" hidden>Directos</a>
+      <a href="#comunidad">Comunidad</a>
+      <a href="#banda" hidden>La banda</a>
       <a href="#membresia">Membresía</a>
+      <a href="#directos" hidden>Directos</a>
       <a href="#bookings" hidden>Contratación</a>
     </nav>
   </header>
@@ -441,19 +441,6 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       </div>
     </section>
 
-    <!-- OCULTO hasta tener el grupo de WhatsApp -->
-    <section class="sec" id="comunidad" aria-labelledby="h-comunidad">
-      <div class="join">
-        <div>
-          <p class="eyebrow">Comunidad</p>
-          <h2 id="h-comunidad">Únete a la comunidad</h2>
-          <p class="sub">Un grupo gratuito para ver los vídeos antes, proponer canciones y hablar con la banda.</p>
-        </div>
-        <a class="btn primary" href="#">Unirme al grupo de WhatsApp</a>
-      </div>
-    </section>
-
-    <!-- OCULTO hasta tener los vídeos -->
     <section class="sec" id="videos" aria-labelledby="h-videos">
       <div class="sec-head">
         <p class="eyebrow">Vídeos</p>
@@ -491,25 +478,6 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       <div class="quiz" id="quiz">
         <div id="quizBody"></div>
       </div>
-    </section>
-
-    <!-- OCULTO hasta tener historia, foto y miembros -->
-    <section class="sec" id="banda" aria-labelledby="h-banda" hidden>
-      <div class="about">
-        <div class="story">
-          <p class="eyebrow">La banda</p>
-          <h2 id="h-banda">Quiénes somos</h2>
-          <p>[Cuenta aquí cómo nació la banda: cuándo, dónde y por qué os juntasteis.]</p>
-          <p>[Qué os une y qué queréis conseguir con el proyecto.]</p>
-        </div>
-        <div class="photo" role="img" aria-label="Espacio para la foto de la banda">[Foto de la banda]</div>
-      </div>
-      <ul class="members" aria-label="Integrantes">
-        <li><strong>[Nombre]</strong><span>[Instrumento]</span></li>
-        <li><strong>[Nombre]</strong><span>[Instrumento]</span></li>
-        <li><strong>[Nombre]</strong><span>[Instrumento]</span></li>
-        <li><strong>[Nombre]</strong><span>[Instrumento]</span></li>
-      </ul>
     </section>
 
     <section class="sec" id="participa" aria-labelledby="h-participa">
@@ -556,32 +524,36 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       </div>
     </section>
 
-    <section class="sec" id="directos" aria-labelledby="h-directos" hidden>
-      <div class="sec-head">
-        <p class="eyebrow">Directos</p>
-        <h2 id="h-directos">Próximos bolos</h2>
+    <section class="sec" id="comunidad" aria-labelledby="h-comunidad">
+      <div class="join">
+        <div>
+          <p class="eyebrow">Comunidad</p>
+          <h2 id="h-comunidad">Únete a la comunidad</h2>
+          <p class="sub">Un grupo gratuito para ver los vídeos antes, proponer canciones y hablar con la banda.</p>
+        </div>
+        <a class="btn primary" href="#">Unirme al grupo de WhatsApp</a>
       </div>
-      <ul class="shows">
-        <li>
-          <span class="date">[Fecha]</span>
-          <div><p class="show-name">[Sala o plaza]</p><p class="show-city">[Localidad]</p></div>
-          <a class="more" href="#">Info →</a>
-        </li>
-        <li>
-          <span class="date">[Fecha]</span>
-          <div><p class="show-name">[Sala o plaza]</p><p class="show-city">[Localidad]</p></div>
-          <a class="more" href="#">Info →</a>
-        </li>
-        <li>
-          <span class="date">[Fecha]</span>
-          <div><p class="show-name">[Sala o plaza]</p><p class="show-city">[Localidad]</p></div>
-          <a class="more" href="#">Info →</a>
-        </li>
-      </ul>
-      <p class="after-list">¿No ves tu ciudad? Escríbenos y la ponemos en el mapa.</p>
     </section>
 
-    <!-- OCULTO hasta tener Patreon -->
+    <!-- OCULTO hasta tener historia, foto y miembros: quitar hidden -->
+    <section class="sec" id="banda" aria-labelledby="h-banda" hidden>
+      <div class="about">
+        <div class="story">
+          <p class="eyebrow">La banda</p>
+          <h2 id="h-banda">Quiénes somos</h2>
+          <p>[Cuenta aquí cómo nació la banda: cuándo, dónde y por qué os juntasteis.]</p>
+          <p>[Qué os une y qué queréis conseguir con el proyecto.]</p>
+        </div>
+        <div class="photo" role="img" aria-label="Espacio para la foto de la banda">[Foto de la banda]</div>
+      </div>
+      <ul class="members" aria-label="Integrantes">
+        <li><strong>[Nombre]</strong><span>[Instrumento]</span></li>
+        <li><strong>[Nombre]</strong><span>[Instrumento]</span></li>
+        <li><strong>[Nombre]</strong><span>[Instrumento]</span></li>
+        <li><strong>[Nombre]</strong><span>[Instrumento]</span></li>
+      </ul>
+    </section>
+
     <section class="sec" id="membresia" aria-labelledby="h-membresia">
       <div class="sec-head">
         <p class="eyebrow">Membresía</p>
@@ -623,6 +595,33 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       </div>
     </section>
 
+    <!-- OCULTO hasta tener fechas de bolos: quitar hidden -->
+    <section class="sec" id="directos" aria-labelledby="h-directos" hidden>
+      <div class="sec-head">
+        <p class="eyebrow">Directos</p>
+        <h2 id="h-directos">Próximos bolos</h2>
+      </div>
+      <ul class="shows">
+        <li>
+          <span class="date">[Fecha]</span>
+          <div><p class="show-name">[Sala o plaza]</p><p class="show-city">[Localidad]</p></div>
+          <a class="more" href="#">Info →</a>
+        </li>
+        <li>
+          <span class="date">[Fecha]</span>
+          <div><p class="show-name">[Sala o plaza]</p><p class="show-city">[Localidad]</p></div>
+          <a class="more" href="#">Info →</a>
+        </li>
+        <li>
+          <span class="date">[Fecha]</span>
+          <div><p class="show-name">[Sala o plaza]</p><p class="show-city">[Localidad]</p></div>
+          <a class="more" href="#">Info →</a>
+        </li>
+      </ul>
+      <p class="after-list">¿No ves tu ciudad? Escríbenos y la ponemos en el mapa.</p>
+    </section>
+
+    <!-- OCULTO hasta decidir cómo recibir solicitudes: quitar hidden -->
     <section class="sec" id="bookings" aria-labelledby="h-bookings" hidden>
       <div class="book">
         <div>
