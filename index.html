@@ -253,6 +253,8 @@ h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.6rem, 4vw
 .sidenav a:hover .lbl, .sidenav a:focus-visible .lbl, .sidenav a[aria-current="true"] .lbl { max-width: 200px; opacity: 1; padding: 4px 8px; }
 .sidenav .arrow { width: 10px; height: 10px; flex: none; display: grid; place-items: center; overflow: visible; transition: color 0.2s ease, transform 0.2s ease; }
 .sidenav .arrow svg { width: 16px; height: 16px; flex: none; }
+.sidenav a.up .arrow { width: 22px; height: 16px; }
+.sidenav a.up .arrow svg { width: 22px; height: 16.3px; }
 .sidenav a.up:hover .arrow { color: var(--pink); transform: translateY(-2px); }
 .sidenav .dot { width: 10px; height: 10px; flex: none; border-radius: 50%; border: 2px solid var(--muted); box-sizing: border-box; transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
 .sidenav a:hover, .sidenav a[aria-current="true"] { color: var(--fg); }
@@ -1147,11 +1149,10 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     a.setAttribute('aria-label', 'Subir al principio de la página');
     a.style.setProperty('--i', '0');
     lbl.className = 'lbl';
-    lbl.textContent = 'Arriba';
+    lbl.textContent = '';
     ar.className = 'arrow';
     ar.setAttribute('aria-hidden', 'true');
-    ar.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
-    a.appendChild(lbl);
+    ar.innerHTML = '<svg viewBox="19.5 40.2 161 119.6" width="22" height="16.3" aria-hidden="true" focusable="false"><defs><clipPath id="mclip2"><rect x="26.9" y="22" width="146.2" height="108.57700466931303"/></clipPath></defs><g transform="translate(-10.13 15.98) scale(1.1013)"><g clip-path="url(#mclip2)"><polygon points="31.90,260.00 31.90,-89.95 100.00,40.06 168.10,-89.95 168.10,260.00 161.90,260.00 161.90,-64.75 100.00,53.42 38.10,-64.75 38.10,260.00" fill="#E5392F" stroke="#E5392F" stroke-width="0.5" stroke-linejoin="round"/><polygon points="40.30,260.00 40.30,-55.81 100.00,58.16 159.70,-55.81 159.70,260.00 153.50,260.00 153.50,-30.61 100.00,71.53 46.50,-30.61 46.50,260.00" fill="#EE7A2C" stroke="#EE7A2C" stroke-width="0.5" stroke-linejoin="round"/><polygon points="48.70,260.00 48.70,-21.67 100.00,76.27 151.30,-21.67 151.30,260.00 145.10,260.00 145.10,3.53 100.00,89.63 54.90,3.53 54.90,260.00" fill="#F2B134" stroke="#F2B134" stroke-width="0.5" stroke-linejoin="round"/><polygon points="57.10,260.00 57.10,12.47 100.00,94.37 142.90,12.47 142.90,260.00 136.70,260.00 136.70,37.67 100.00,107.73 63.30,37.67 63.30,260.00" fill="#F7E3BC" stroke="#F7E3BC" stroke-width="0.5" stroke-linejoin="round"/><polygon points="65.50,260.00 65.50,46.61 100.00,112.47 134.50,46.61 134.50,260.00 128.30,260.00 128.30,71.81 100.00,125.84 71.70,71.81 71.70,260.00" fill="#4FB8BA" stroke="#4FB8BA" stroke-width="0.5" stroke-linejoin="round"/><polygon points="73.90,260.00 73.90,80.75 100.00,130.58 126.10,80.75 126.10,260.00 119.90,260.00 119.90,105.95 100.00,143.94 80.10,105.95 80.10,260.00" fill="#2E6E8C" stroke="#2E6E8C" stroke-width="0.5" stroke-linejoin="round"/></g></g></svg>';
     a.appendChild(ar);
     li.appendChild(a);
     ol.appendChild(li);
