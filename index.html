@@ -333,12 +333,10 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 
 /* ===== profundidad de campo ===== */
 /* una sola raya de seis franjas: baja desde arriba, pasa por detrás de la tarjeta y se abre en perspectiva como un suelo */
-.deco-ray { top: 0; right: auto; bottom: 0; height: auto; overflow: hidden; z-index: -1;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 34%, #000 86%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 34%, #000 86%, transparent 100%); }
-.deco-ray svg { transform: translateY(var(--py, 0px)); }
-.deco-ray.p-kick { animation: rayHit 0.4s ease-out; }
-@keyframes rayHit { from { filter: drop-shadow(0 0 22px rgba(242, 177, 52, 0.55)) brightness(1.3); } to { filter: drop-shadow(0 0 14px rgba(238, 122, 44, 0.28)) brightness(1); } }
-@media (max-width: 760px) { .deco-ray { opacity: 0.5; } }
+body { isolation: isolate; }
+.deco-ray { top: 0; left: 0; right: auto; width: 100%; height: 0; overflow: hidden; z-index: -1; filter: none; }
+.deco-ray svg { display: block; }
+@media (max-width: 760px) { .deco-ray { opacity: 0.55; } }
 /* círculos de luz (bokeh) a varias distancias: fondo nítido-suave y primer plano muy desenfocado */
 .bokeh { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
 .bokeh-front { z-index: 30; }
@@ -356,7 +354,6 @@ html.depth .rack { opacity: 0; filter: blur(9px); translate: 0 20px; scale: 0.98
 html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
 @media (prefers-reduced-motion: reduce) {
   html.depth .rack { opacity: 1; filter: none; translate: none; scale: none; transition: none; }
-  .deco-ray.p-kick { animation: none; }
   .seq { transform: none; }
 }
 </style>
@@ -384,6 +381,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
 </svg>
 
 <div id="flash" aria-hidden="true"></div>
+<div class="deco deco-ray" aria-hidden="true"></div>
 <div class="bokeh" aria-hidden="true"></div>
 <div class="bokeh bokeh-front" aria-hidden="true"></div>
 
@@ -406,7 +404,6 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
 
   <main>
     <section class="hero" aria-labelledby="titulo">
-      <div class="deco deco-ray" aria-hidden="true"></div>
       <div>
         <p class="eyebrow">Funk con sintes, para no quedarte sentado</p>
         <h1 id="titulo">Meigo Groove</h1>
@@ -718,22 +715,29 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   var ray = document.querySelector('.deco-ray');
   var timer = 0;
   function buildRay() {
-    var hero = ray.parentNode, seq = document.getElementById('seq');
-    var r = hero.getBoundingClientRect(), W = document.documentElement.clientWidth, H = r.height;
-    ray.style.left = (-r.left) + 'px';
+    var hero = document.querySelector('.hero'), seq = document.getElementById('seq');
+    var W = document.documentElement.clientWidth;
+    ray.style.height = '0px';
+    var H = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    ray.style.height = H + 'px';
     ray.style.width = W + 'px';
-    var sr = seq.getBoundingClientRect();
-    var stacked = sr.left - r.left < 100;
-    var cx, y0, w, g, k;
-    if (!stacked) {
-      cx = sr.left + sr.width / 2; y0 = sr.bottom - r.top - 12; w = 26; g = 10; k = 4.6;
-    } else {
-      cx = W - 30; y0 = H - 110; w = 5; g = 2.5; k = 3.4;
-    }
-    y0 = Math.max(60, Math.min(y0, H - 70));
-    var d = H - y0, svg = document.createElementNS(NS, 'svg');
+    var sr = seq.getBoundingClientRect(), hr = hero.getBoundingClientRect();
+    var sx = window.pageXOffset || 0;
+    var stacked = sr.left - hr.left < 100;
+    var cx, w, g, k, fan;
+    if (!stacked) { cx = sr.left + sx + sr.width / 2; w = 26; g = 10; k = 4.6; fan = 420; }
+    else { cx = W - 30; w = 5; g = 2.5; k = 3.4; fan = 240; }
+    var y0 = Math.max(200, H - fan), d = H - y0;
+    var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('width', W); svg.setAttribute('height', H);
     svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var defs = document.createElementNS(NS, 'defs');
+    defs.innerHTML = '<linearGradient id="rayFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>' +
+      '<mask id="rayMask" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '"><rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#000"/>' +
+      '<rect x="0" y="0" width="' + W + '" height="420" fill="url(#rayFade)"/><rect x="0" y="420" width="' + W + '" height="' + Math.max(0, H - 420) + '" fill="#fff"/></mask>';
+    svg.appendChild(defs);
+    var grp = document.createElementNS(NS, 'g');
+    grp.setAttribute('mask', 'url(#rayMask)');
     for (var i = 0; i < 6; i++) {
       var xl = cx + (i - 3) * (w + g) + g / 2, xr = xl + w;
       var xlb = cx + (xl - cx) * k, xrb = cx + (xr - cx) * k;
@@ -744,14 +748,16 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       var pa = document.createElementNS(NS, 'path');
       pa.setAttribute('d', dpath);
       pa.setAttribute('fill', 'var(--s' + (i + 1) + ')');
-      svg.appendChild(pa);
+      grp.appendChild(pa);
     }
+    svg.appendChild(grp);
     ray.textContent = '';
     ray.appendChild(svg);
   }
   buildRay();
   window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(buildRay, 120); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildRay);
+  if (window.ResizeObserver) new ResizeObserver(function () { clearTimeout(timer); timer = setTimeout(buildRay, 150); }).observe(document.body);
   window.addEventListener('load', buildRay);
   })();
 (function () {
@@ -804,7 +810,6 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       b.el.style.setProperty('--py', py.toFixed(1) + 'px');
     });
     if (y < window.innerHeight * 1.3) {
-      if (rayEl) rayEl.style.setProperty('--py', (y * 0.08).toFixed(1) + 'px');
     }
     if (seq && !touch) {
       seq.style.setProperty('--ry', ((mx - 0.5) * 5).toFixed(2) + 'deg');
@@ -988,7 +993,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   }
   var titleEl = document.getElementById('titulo');
   var flashEl = document.getElementById('flash');
-  var farEl = document.querySelector('.deco-ray');
+  var farEl = null;
   var navEl = document.getElementById('sidenav');
   var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
   function pulse(el, cls) {
