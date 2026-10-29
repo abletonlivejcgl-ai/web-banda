@@ -326,19 +326,19 @@ footer p { margin: 0; align-self: center; }
 /* ===== decoración: franjas curvas de cinta ===== */
 .deco { position: absolute; z-index: -1; pointer-events: none; top: 0; right: 0; width: 100%; height: 60%; filter: drop-shadow(0 0 14px rgba(238, 122, 44, 0.28)); }
 .deco svg { width: 100%; height: 100%; display: block; }
-@media (max-width: 760px) { .deco { opacity: 0.5; height: 110px; } }
 body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 6px; z-index: 40; background: linear-gradient(90deg, var(--s1) 0 16.66%, var(--s2) 0 33.33%, var(--s3) 0 50%, var(--s4) 0 66.66%, var(--s5) 0 83.33%, var(--s6) 0); }
 .tile:nth-child(1) { --a: color-mix(in srgb, var(--s1) 24%, var(--bg)); --b: color-mix(in srgb, var(--s1) 36%, var(--bg)); }
 .tile:nth-child(2) { --a: color-mix(in srgb, var(--s3) 24%, var(--bg)); --b: color-mix(in srgb, var(--s3) 36%, var(--bg)); }
 .tile:nth-child(3) { --a: color-mix(in srgb, var(--s5) 24%, var(--bg)); --b: color-mix(in srgb, var(--s5) 36%, var(--bg)); }
 
 /* ===== profundidad de campo ===== */
-/* capa lejana: las mismas franjas, más grandes, desenfocadas y casi transparentes */
-.deco-far { top: auto; bottom: 0; right: auto; left: 0; height: 58%; z-index: -2; opacity: 0.34; filter: blur(9px);
-  transform: translate(var(--px, 0px), var(--py, 0px)) rotate(180deg); }
-.deco-far.p-kick { animation: farFocus 0.4s ease-out; }
-@keyframes farFocus { from { filter: blur(3px); opacity: 0.55; } to { filter: blur(9px); opacity: 0.34; } }
-.deco-arcs { transform: translate(var(--px, 0px), var(--py, 0px)); }
+/* una sola raya de seis franjas: baja desde arriba, pasa por detrás de la tarjeta y se abre en perspectiva como un suelo */
+.deco-ray { top: 0; right: auto; bottom: 0; height: auto; overflow: hidden; z-index: -1;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 34%, #000 86%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 34%, #000 86%, transparent 100%); }
+.deco-ray svg { transform: translateY(var(--py, 0px)); }
+.deco-ray.p-kick { animation: rayHit 0.4s ease-out; }
+@keyframes rayHit { from { filter: drop-shadow(0 0 22px rgba(242, 177, 52, 0.55)) brightness(1.3); } to { filter: drop-shadow(0 0 14px rgba(238, 122, 44, 0.28)) brightness(1); } }
+@media (max-width: 760px) { .deco-ray { opacity: 0.5; } }
 /* círculos de luz (bokeh) a varias distancias: fondo nítido-suave y primer plano muy desenfocado */
 .bokeh { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
 .bokeh-front { z-index: 30; }
@@ -346,7 +346,7 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
   border-radius: 50%; opacity: var(--o); filter: blur(var(--b)); mix-blend-mode: screen; will-change: transform;
   background: radial-gradient(circle, color-mix(in srgb, var(--c) 45%, transparent) 0 60%, color-mix(in srgb, var(--c) 85%, transparent) 69%, transparent 73%);
   transform: translate3d(var(--px, 0px), var(--py, 0px), 0); }
-@media (max-width: 760px) { .bokeh i { --k: 0.6; } .deco-far { height: 32%; filter: blur(6px); } }
+@media (max-width: 760px) { .bokeh i { --k: 0.6; } }
 /* tarjetas elevadas: sombras por capas (contacto + ambiente + lejana) */
 .seq, .form, .tier, .tile, .quiz { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 2px 4px rgba(0, 0, 0, 0.45), 0 14px 30px rgba(0, 0, 0, 0.45), 0 44px 80px -24px rgba(0, 0, 0, 0.7); }
 .seq { transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
@@ -356,7 +356,7 @@ html.depth .rack { opacity: 0; filter: blur(9px); translate: 0 20px; scale: 0.98
 html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
 @media (prefers-reduced-motion: reduce) {
   html.depth .rack { opacity: 1; filter: none; translate: none; scale: none; transition: none; }
-  .deco-far.p-kick { animation: none; }
+  .deco-ray.p-kick { animation: none; }
   .seq { transform: none; }
 }
 </style>
@@ -406,8 +406,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
 
   <main>
     <section class="hero" aria-labelledby="titulo">
-      <div class="deco deco-far" aria-hidden="true"></div>
-      <div class="deco deco-arcs" aria-hidden="true"></div>
+      <div class="deco deco-ray" aria-hidden="true"></div>
       <div>
         <p class="eyebrow">Funk con sintes, para no quedarte sentado</p>
         <h1 id="titulo">Meigo Groove</h1>
@@ -716,20 +715,44 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
 <script>
 (function () {
   var NS = 'http://www.w3.org/2000/svg';
-  var arcs = document.querySelector('.deco-arcs');
-  var svg = document.createElementNS(NS, 'svg');
-  svg.setAttribute('viewBox', '0 0 1200 500');
-  svg.setAttribute('preserveAspectRatio', 'xMaxYMin slice');
-  for (var k = 0; k < 6; k++) {
-    var R = 150 - k * 22, cy = 210, cx = 950;
-    var pa = document.createElementNS(NS, 'path');
-    pa.setAttribute('d', 'M-60 ' + (cy - R) + ' H' + cx + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + ' V520');
-    pa.setAttribute('fill', 'none');
-    pa.setAttribute('stroke', 'var(--s' + (k + 1) + ')');
-    pa.setAttribute('stroke-width', '17');
-    svg.appendChild(pa);
+  var ray = document.querySelector('.deco-ray');
+  var timer = 0;
+  function buildRay() {
+    var hero = ray.parentNode, seq = document.getElementById('seq');
+    var r = hero.getBoundingClientRect(), W = document.documentElement.clientWidth, H = r.height;
+    ray.style.left = (-r.left) + 'px';
+    ray.style.width = W + 'px';
+    var sr = seq.getBoundingClientRect();
+    var stacked = sr.left - r.left < 100;
+    var cx, y0, w, g, k;
+    if (!stacked) {
+      cx = sr.left + sr.width / 2; y0 = sr.bottom - r.top - 12; w = 26; g = 10; k = 4.6;
+    } else {
+      cx = W - 30; y0 = H - 110; w = 5; g = 2.5; k = 3.4;
+    }
+    y0 = Math.max(60, Math.min(y0, H - 70));
+    var d = H - y0, svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', W); svg.setAttribute('height', H);
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    for (var i = 0; i < 6; i++) {
+      var xl = cx + (i - 3) * (w + g) + g / 2, xr = xl + w;
+      var xlb = cx + (xl - cx) * k, xrb = cx + (xr - cx) * k;
+      function edge(x, xb) { return [x, y0 + 0.45 * d, x + (xb - x) * 0.45, y0 + 0.7 * d, xb, H]; }
+      var L = edge(xl, xlb), R = edge(xr, xrb);
+      var dpath = 'M' + xl + ' 0 L' + xl + ' ' + y0 + ' C' + L.join(' ') + ' L' + xrb + ' ' + H +
+        ' C' + R[2] + ' ' + R[3] + ' ' + R[0] + ' ' + R[1] + ' ' + xr + ' ' + y0 + ' L' + xr + ' 0 Z';
+      var pa = document.createElementNS(NS, 'path');
+      pa.setAttribute('d', dpath);
+      pa.setAttribute('fill', 'var(--s' + (i + 1) + ')');
+      svg.appendChild(pa);
+    }
+    ray.textContent = '';
+    ray.appendChild(svg);
   }
-  arcs.appendChild(svg);
+  buildRay();
+  window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(buildRay, 120); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildRay);
+  window.addEventListener('load', buildRay);
   })();
 (function () {
   // profundidad de campo: capa lejana, bokeh, paralaje y enfoque al entrar
@@ -737,23 +760,6 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var touch = window.matchMedia && window.matchMedia('(hover: none)').matches;
   var root = document.documentElement;
-
-  var far = document.querySelector('.deco-far');
-  if (far) {
-    var sv = document.createElementNS(NS, 'svg');
-    sv.setAttribute('viewBox', '0 0 1200 520');
-    sv.setAttribute('preserveAspectRatio', 'xMaxYMin slice');
-    for (var k = 0; k < 6; k++) {
-      var R = 210 - k * 40, cy = 250, cx = 900;
-      var pa = document.createElementNS(NS, 'path');
-      pa.setAttribute('d', 'M-60 ' + (cy - R) + ' H' + cx + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + ' V540');
-      pa.setAttribute('fill', 'none');
-      pa.setAttribute('stroke', 'var(--s' + (6 - k) + ')');
-      pa.setAttribute('stroke-width', '30');
-      sv.appendChild(pa);
-    }
-    far.appendChild(sv);
-  }
 
   // círculos de luz: x,y en % de pantalla; s tamaño; b desenfoque; o opacidad; d profundidad (más alto = más cerca)
   var BACK = [
@@ -785,8 +791,8 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   lights(hosts[0], BACK);
   lights(hosts[1], FRONT);
 
-  var arcs = document.querySelector('.deco-arcs');
   var seq = document.getElementById('seq');
+  var rayEl = document.querySelector('.deco-ray');
   var mx = 0.5, my = 0.5, ticking = false;
   function frame() {
     ticking = false;
@@ -798,8 +804,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       b.el.style.setProperty('--py', py.toFixed(1) + 'px');
     });
     if (y < window.innerHeight * 1.3) {
-      if (arcs) { arcs.style.setProperty('--py', (y * 0.12).toFixed(1) + 'px'); arcs.style.setProperty('--px', ((mx - 0.5) * -16).toFixed(1) + 'px'); }
-      if (far) { far.style.setProperty('--py', (y * -0.18).toFixed(1) + 'px'); far.style.setProperty('--px', ((mx - 0.5) * 30).toFixed(1) + 'px'); }
+      if (rayEl) rayEl.style.setProperty('--py', (y * 0.08).toFixed(1) + 'px');
     }
     if (seq && !touch) {
       seq.style.setProperty('--ry', ((mx - 0.5) * 5).toFixed(2) + 'deg');
@@ -983,7 +988,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   }
   var titleEl = document.getElementById('titulo');
   var flashEl = document.getElementById('flash');
-  var farEl = document.querySelector('.deco-far');
+  var farEl = document.querySelector('.deco-ray');
   var navEl = document.getElementById('sidenav');
   var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
   function pulse(el, cls) {
