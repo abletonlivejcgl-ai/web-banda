@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0A0A0C">
 <meta name="description" content="Meigo Groove: covers de funk electrónico con alma gallega y cubana, bajo funky y sintetizadores. Toca tu propio groove, haz el test de qué funkero eres y pide la próxima canción.">
 <link rel="canonical" href="https://abletonlivejcgl-ai.github.io/web-banda/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230F0B16'/%3E%3Crect x='7' y='7' width='8' height='8' rx='2' fill='%23FF3F8E'/%3E%3Crect x='17' y='17' width='8' height='8' rx='2' fill='%23FFC23D'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20200%20200'%3E%3Cdefs%3E%3CclipPath%20id='mf'%3E%3Crect%20x='26.9'%20y='22'%20width='146.2'%20height='108.57700466931303'/%3E%3C/clipPath%3E%3C/defs%3E%3Crect%20width='200'%20height='200'%20rx='44'%20fill='%230A0A0C'/%3E%3Cg%20transform='translate%28-1.32%2022.70%29%20scale%281.0132%29'%3E%3Cg%20clip-path='url%28%23mf%29'%3E%3Cpolygon%20points='31.90%2C260.00%2031.90%2C-89.95%20100.00%2C40.06%20168.10%2C-89.95%20168.10%2C260.00%20161.90%2C260.00%20161.90%2C-64.75%20100.00%2C53.42%2038.10%2C-64.75%2038.10%2C260.00'%20fill='%23E5392F'%20stroke='%23E5392F'%20stroke-width='0.5'%20stroke-linejoin='round'/%3E%3Cpolygon%20points='40.30%2C260.00%2040.30%2C-55.81%20100.00%2C58.16%20159.70%2C-55.81%20159.70%2C260.00%20153.50%2C260.00%20153.50%2C-30.61%20100.00%2C71.53%2046.50%2C-30.61%2046.50%2C260.00'%20fill='%23EE7A2C'%20stroke='%23EE7A2C'%20stroke-width='0.5'%20stroke-linejoin='round'/%3E%3Cpolygon%20points='48.70%2C260.00%2048.70%2C-21.67%20100.00%2C76.27%20151.30%2C-21.67%20151.30%2C260.00%20145.10%2C260.00%20145.10%2C3.53%20100.00%2C89.63%2054.90%2C3.53%2054.90%2C260.00'%20fill='%23F2B134'%20stroke='%23F2B134'%20stroke-width='0.5'%20stroke-linejoin='round'/%3E%3Cpolygon%20points='57.10%2C260.00%2057.10%2C12.47%20100.00%2C94.37%20142.90%2C12.47%20142.90%2C260.00%20136.70%2C260.00%20136.70%2C37.67%20100.00%2C107.73%2063.30%2C37.67%2063.30%2C260.00'%20fill='%23F7E3BC'%20stroke='%23F7E3BC'%20stroke-width='0.5'%20stroke-linejoin='round'/%3E%3Cpolygon%20points='65.50%2C260.00%2065.50%2C46.61%20100.00%2C112.47%20134.50%2C46.61%20134.50%2C260.00%20128.30%2C260.00%20128.30%2C71.81%20100.00%2C125.84%2071.70%2C71.81%2071.70%2C260.00'%20fill='%234FB8BA'%20stroke='%234FB8BA'%20stroke-width='0.5'%20stroke-linejoin='round'/%3E%3Cpolygon%20points='73.90%2C260.00%2073.90%2C80.75%20100.00%2C130.58%20126.10%2C80.75%20126.10%2C260.00%20119.90%2C260.00%20119.90%2C105.95%20100.00%2C143.94%2080.10%2C105.95%2080.10%2C260.00'%20fill='%232E6E8C'%20stroke='%232E6E8C'%20stroke-width='0.5'%20stroke-linejoin='round'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="Meigo Groove">
@@ -65,7 +65,7 @@ a { color: inherit; }
 
 /* top bar */
 .top { scroll-snap-align: start; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px 24px; padding-block: 14px; }
-.logo { font-family: var(--display); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.logo { gap: 10px; font-family: var(--display); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .top nav { display: flex; flex-wrap: wrap; gap: 0 20px; }
 .top nav a { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .top nav a:hover { color: var(--fg); }
@@ -357,6 +357,8 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   html.depth .rack { opacity: 1; filter: none; translate: none; scale: none; transition: none; }
   .seq { transform: none; }
 }
+.logo-m { height: 26px; width: auto; display: block; flex: none; }
+@media (max-width: 620px) { .logo-m { height: 20px; } .logo { gap: 7px; } }
 </style>
 </head>
 <body>
@@ -390,7 +392,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
 
 <div class="wrap">
   <header class="top">
-    <a class="logo" href="#">Meigo Groove</a>
+    <a class="logo" href="#" aria-label="Meigo Groove, ir al principio"><svg class="logo-m" xmlns="http://www.w3.org/2000/svg" viewBox="19.5 40.2 161 119.6" aria-hidden="true" focusable="false"><defs><clipPath id="mclip"><rect x="26.9" y="22" width="146.2" height="108.57700466931303"/></clipPath></defs><g transform="translate(-10.13 15.98) scale(1.1013)"><g clip-path="url(#mclip)"><polygon points="31.90,260.00 31.90,-89.95 100.00,40.06 168.10,-89.95 168.10,260.00 161.90,260.00 161.90,-64.75 100.00,53.42 38.10,-64.75 38.10,260.00" fill="#E5392F" stroke="#E5392F" stroke-width="0.5" stroke-linejoin="round"/><polygon points="40.30,260.00 40.30,-55.81 100.00,58.16 159.70,-55.81 159.70,260.00 153.50,260.00 153.50,-30.61 100.00,71.53 46.50,-30.61 46.50,260.00" fill="#EE7A2C" stroke="#EE7A2C" stroke-width="0.5" stroke-linejoin="round"/><polygon points="48.70,260.00 48.70,-21.67 100.00,76.27 151.30,-21.67 151.30,260.00 145.10,260.00 145.10,3.53 100.00,89.63 54.90,3.53 54.90,260.00" fill="#F2B134" stroke="#F2B134" stroke-width="0.5" stroke-linejoin="round"/><polygon points="57.10,260.00 57.10,12.47 100.00,94.37 142.90,12.47 142.90,260.00 136.70,260.00 136.70,37.67 100.00,107.73 63.30,37.67 63.30,260.00" fill="#F7E3BC" stroke="#F7E3BC" stroke-width="0.5" stroke-linejoin="round"/><polygon points="65.50,260.00 65.50,46.61 100.00,112.47 134.50,46.61 134.50,260.00 128.30,260.00 128.30,71.81 100.00,125.84 71.70,71.81 71.70,260.00" fill="#4FB8BA" stroke="#4FB8BA" stroke-width="0.5" stroke-linejoin="round"/><polygon points="73.90,260.00 73.90,80.75 100.00,130.58 126.10,80.75 126.10,260.00 119.90,260.00 119.90,105.95 100.00,143.94 80.10,105.95 80.10,260.00" fill="#2E6E8C" stroke="#2E6E8C" stroke-width="0.5" stroke-linejoin="round"/></g></g></svg><span>Meigo Groove</span></a>
     <nav aria-label="Secciones">
       <a href="#comunidad">Comunidad</a>
       <a href="#videos">Vídeos</a>
