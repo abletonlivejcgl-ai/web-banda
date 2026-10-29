@@ -995,12 +995,11 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     void el.offsetWidth;
     el.classList.add(cls);
   }
-  // 0 bombo → título, 1 caja → destello de fondo, 2 hi-hat → puntos del menú, 3 clap → tarjeta del ritmo
+  // 0 bombo → título, 1 caja → destello de fondo, 2 hi-hat → puntos del menú
   var DANCE = [
     function () { pulse(titleEl, 'p-kick'); pulse(farEl, 'p-kick'); },
     function () { pulse(flashEl, 'go'); },
-    function () { pulse(navEl, 'p-hat'); },
-    function () { pulse(seqEl, 'thump'); }
+    function () { pulse(navEl, 'p-hat'); }
   ];
   function draw() {
     if (!playing) return;
