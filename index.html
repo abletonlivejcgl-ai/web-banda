@@ -331,6 +331,34 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 .tile:nth-child(1) { --a: color-mix(in srgb, var(--s1) 24%, var(--bg)); --b: color-mix(in srgb, var(--s1) 36%, var(--bg)); }
 .tile:nth-child(2) { --a: color-mix(in srgb, var(--s3) 24%, var(--bg)); --b: color-mix(in srgb, var(--s3) 36%, var(--bg)); }
 .tile:nth-child(3) { --a: color-mix(in srgb, var(--s5) 24%, var(--bg)); --b: color-mix(in srgb, var(--s5) 36%, var(--bg)); }
+
+/* ===== profundidad de campo ===== */
+/* capa lejana: las mismas franjas, más grandes, desenfocadas y casi transparentes */
+.deco-far { top: auto; bottom: 0; right: auto; left: 0; height: 58%; z-index: -2; opacity: 0.34; filter: blur(9px);
+  transform: translate(var(--px, 0px), var(--py, 0px)) rotate(180deg); }
+.deco-far.p-kick { animation: farFocus 0.4s ease-out; }
+@keyframes farFocus { from { filter: blur(3px); opacity: 0.55; } to { filter: blur(9px); opacity: 0.34; } }
+.deco-arcs { transform: translate(var(--px, 0px), var(--py, 0px)); }
+/* círculos de luz (bokeh) a varias distancias: fondo nítido-suave y primer plano muy desenfocado */
+.bokeh { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.bokeh-front { z-index: 30; }
+.bokeh i { --k: 1; position: absolute; width: calc(var(--sz) * var(--k)); height: calc(var(--sz) * var(--k)); margin: calc(var(--sz) * var(--k) / -2) 0 0 calc(var(--sz) * var(--k) / -2);
+  border-radius: 50%; opacity: var(--o); filter: blur(var(--b)); mix-blend-mode: screen; will-change: transform;
+  background: radial-gradient(circle, color-mix(in srgb, var(--c) 45%, transparent) 0 60%, color-mix(in srgb, var(--c) 85%, transparent) 69%, transparent 73%);
+  transform: translate3d(var(--px, 0px), var(--py, 0px), 0); }
+@media (max-width: 760px) { .bokeh i { --k: 0.6; } .deco-far { height: 32%; filter: blur(6px); } }
+/* tarjetas elevadas: sombras por capas (contacto + ambiente + lejana) */
+.seq, .form, .tier, .tile, .quiz { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 2px 4px rgba(0, 0, 0, 0.45), 0 14px 30px rgba(0, 0, 0, 0.45), 0 44px 80px -24px rgba(0, 0, 0, 0.7); }
+.seq { transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
+/* efecto de enfoque: cada elemento llega desenfocado y se hace nítido al entrar */
+html.depth .rack { opacity: 0; filter: blur(9px); translate: 0 20px; scale: 0.985;
+  transition: opacity 0.8s ease, filter 0.8s ease, translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), scale 0.8s ease, transform 0.3s ease-out; transition-delay: var(--rd, 0s); }
+html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
+@media (prefers-reduced-motion: reduce) {
+  html.depth .rack { opacity: 1; filter: none; translate: none; scale: none; transition: none; }
+  .deco-far.p-kick { animation: none; }
+  .seq { transform: none; }
+}
 </style>
 </head>
 <body>
@@ -356,6 +384,8 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 </svg>
 
 <div id="flash" aria-hidden="true"></div>
+<div class="bokeh" aria-hidden="true"></div>
+<div class="bokeh bokeh-front" aria-hidden="true"></div>
 
 <nav class="sidenav" id="sidenav" aria-label="Ir a una sección"><ol></ol></nav>
 
@@ -376,6 +406,7 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 
   <main>
     <section class="hero" aria-labelledby="titulo">
+      <div class="deco deco-far" aria-hidden="true"></div>
       <div class="deco deco-arcs" aria-hidden="true"></div>
       <div>
         <p class="eyebrow">Funk con sintes, para no quedarte sentado</p>
@@ -701,6 +732,113 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
   arcs.appendChild(svg);
   })();
 (function () {
+  // profundidad de campo: capa lejana, bokeh, paralaje y enfoque al entrar
+  var NS = 'http://www.w3.org/2000/svg';
+  var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var touch = window.matchMedia && window.matchMedia('(hover: none)').matches;
+  var root = document.documentElement;
+
+  var far = document.querySelector('.deco-far');
+  if (far) {
+    var sv = document.createElementNS(NS, 'svg');
+    sv.setAttribute('viewBox', '0 0 1200 520');
+    sv.setAttribute('preserveAspectRatio', 'xMaxYMin slice');
+    for (var k = 0; k < 6; k++) {
+      var R = 210 - k * 40, cy = 250, cx = 900;
+      var pa = document.createElementNS(NS, 'path');
+      pa.setAttribute('d', 'M-60 ' + (cy - R) + ' H' + cx + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + ' V540');
+      pa.setAttribute('fill', 'none');
+      pa.setAttribute('stroke', 'var(--s' + (6 - k) + ')');
+      pa.setAttribute('stroke-width', '30');
+      sv.appendChild(pa);
+    }
+    far.appendChild(sv);
+  }
+
+  // círculos de luz: x,y en % de pantalla; s tamaño; b desenfoque; o opacidad; d profundidad (más alto = más cerca)
+  var BACK = [
+    { x: 8, y: 20, s: 90, b: 10, o: 0.28, c: 3, d: 0.2 },
+    { x: 78, y: 64, s: 140, b: 14, o: 0.2, c: 5, d: 0.12 },
+    { x: 92, y: 14, s: 60, b: 6, o: 0.3, c: 2, d: 0.3 },
+    { x: 34, y: 82, s: 110, b: 12, o: 0.18, c: 1, d: 0.16 },
+    { x: 58, y: 34, s: 50, b: 5, o: 0.24, c: 4, d: 0.26 }
+  ];
+  var FRONT = [
+    { x: -4, y: 72, s: 280, b: 28, o: 0.2, c: 2, d: 0.9 },
+    { x: 98, y: 90, s: 320, b: 32, o: 0.18, c: 1, d: 1.2 }
+  ];
+  var bits = [];
+  function lights(host, list) {
+    if (!host) return;
+    list.forEach(function (o) {
+      var el = document.createElement('i');
+      el.style.left = o.x + '%'; el.style.top = o.y + '%';
+      el.style.setProperty('--sz', o.s + 'px');
+      el.style.setProperty('--b', o.b + 'px');
+      el.style.setProperty('--o', o.o);
+      el.style.setProperty('--c', 'var(--s' + o.c + ')');
+      host.appendChild(el);
+      bits.push({ el: el, d: o.d });
+    });
+  }
+  var hosts = document.querySelectorAll('.bokeh');
+  lights(hosts[0], BACK);
+  lights(hosts[1], FRONT);
+
+  var arcs = document.querySelector('.deco-arcs');
+  var seq = document.getElementById('seq');
+  var mx = 0.5, my = 0.5, ticking = false;
+  function frame() {
+    ticking = false;
+    var y = window.pageYOffset || 0;
+    bits.forEach(function (b) {
+      var px = (mx - 0.5) * b.d * 70;
+      var py = Math.sin(y * 0.0022 * (1 + b.d)) * b.d * 90 + (my - 0.5) * b.d * 40;
+      b.el.style.setProperty('--px', px.toFixed(1) + 'px');
+      b.el.style.setProperty('--py', py.toFixed(1) + 'px');
+    });
+    if (y < window.innerHeight * 1.3) {
+      if (arcs) { arcs.style.setProperty('--py', (y * 0.12).toFixed(1) + 'px'); arcs.style.setProperty('--px', ((mx - 0.5) * -16).toFixed(1) + 'px'); }
+      if (far) { far.style.setProperty('--py', (y * -0.18).toFixed(1) + 'px'); far.style.setProperty('--px', ((mx - 0.5) * 30).toFixed(1) + 'px'); }
+    }
+    if (seq && !touch) {
+      seq.style.setProperty('--ry', ((mx - 0.5) * 5).toFixed(2) + 'deg');
+      seq.style.setProperty('--rx', ((0.5 - my) * 3.5).toFixed(2) + 'deg');
+    }
+  }
+  function ask() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+  if (!calm) {
+    window.addEventListener('scroll', ask, { passive: true });
+    window.addEventListener('resize', ask);
+    if (!touch) window.addEventListener('mousemove', function (e) {
+      mx = e.clientX / Math.max(1, window.innerWidth);
+      my = e.clientY / Math.max(1, window.innerHeight);
+      ask();
+    }, { passive: true });
+    frame();
+  }
+
+  // enfoque al entrar
+  var sel = '.hero > div:not(.deco), .hero .seq, .sec-head, .join, .about, .members li, .tile, .quiz, .form, .tier, .after-list';
+  var items = Array.prototype.slice.call(document.querySelectorAll(sel));
+  root.classList.add('depth');
+  items.forEach(function (el, i) {
+    el.classList.add('rack');
+    var sib = Array.prototype.indexOf.call(el.parentNode.children, el);
+    el.style.setProperty('--rd', (Math.max(0, sib) * 0.09).toFixed(2) + 's');
+  });
+  function show(el) { el.classList.add('in'); }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    items.forEach(function (el) { io.observe(el); });
+    setTimeout(function () { items.forEach(function (el) { if (!el.classList.contains('in') && el.getBoundingClientRect().top < window.innerHeight) show(el); }); }, 400);
+  } else {
+    items.forEach(show);
+  }
+})();
+(function () {
   var ROWS = [
     { id: 'kick',  label: 'Bombo',  on: [0, 4, 8, 12] },
     { id: 'snare', label: 'Caja',   on: [4, 12] },
@@ -845,6 +983,7 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
   }
   var titleEl = document.getElementById('titulo');
   var flashEl = document.getElementById('flash');
+  var farEl = document.querySelector('.deco-far');
   var navEl = document.getElementById('sidenav');
   var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
   function pulse(el, cls) {
@@ -855,7 +994,7 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
   }
   // 0 bombo → título, 1 caja → destello de fondo, 2 hi-hat → puntos del menú, 3 bajo → tarjeta del ritmo
   var DANCE = [
-    function () { pulse(titleEl, 'p-kick'); },
+    function () { pulse(titleEl, 'p-kick'); pulse(farEl, 'p-kick'); },
     function () { pulse(flashEl, 'go'); },
     function () { pulse(navEl, 'p-hat'); },
     function () { pulse(seqEl, 'thump'); }
