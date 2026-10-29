@@ -185,7 +185,7 @@ h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.6rem, 4vw
 .clabel { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); grid-column: 1 / -1; }
 .cval { font-size: 1.1rem; font-weight: 500; overflow-wrap: anywhere; user-select: all; }
 
-.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px; max-width: 880px; }
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px; max-width: 1080px; }
 .tier { background: var(--surface); border: 1.5px solid var(--line); border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 .tier.featured { border-color: var(--pink); }
 .tier-tag { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sun); margin: 0; }
@@ -559,24 +559,34 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
       <div class="tiers">
         <article class="tier">
           <p class="tier-tag">Fan</p>
-          <p class="price">[Precio] <span>/ mes</span></p>
+          <p class="price">3 € <span>/ mes</span></p>
           <ul class="perks">
-            <li>Acceso anticipado a los vídeos nuevos</li>
-            <li>Ensayos y detrás de cámaras</li>
-            <li>Acceso a la comunidad de seguidores</li>
+            <li>Detrás de cámaras y ensayos</li>
+            <li>Tu nombre en los créditos de los vídeos</li>
+            <li>Acceso al grupo privado de la comunidad</li>
           </ul>
           <a class="btn" href="#">Unirme en Patreon</a>
         </article>
         <article class="tier featured">
           <p class="tier-tag">Backstage</p>
-          <p class="price">[Precio] <span>/ mes</span></p>
+          <p class="price">6 € <span>/ mes</span></p>
           <ul class="perks">
             <li>Todo lo del nivel Fan</li>
-            <li>Votas la próxima canción que versionamos</li>
-            <li>Preventa de entradas, cuando sea posible</li>
-            <li>Tu nombre en los créditos de un vídeo</li>
+            <li>Votas cada mes la próxima canción que tocamos</li>
+            <li>Directos de ensayo y de cómo montamos los arreglos</li>
           </ul>
           <a class="btn primary" href="#">Unirme en Patreon</a>
+        </article>
+        <article class="tier">
+          <p class="tier-tag">Músico</p>
+          <p class="price">10 € <span>/ mes</span></p>
+          <ul class="perks">
+            <li>Todo lo del nivel Backstage</li>
+            <li>Mis arreglos: pistas por instrumento, ritmos y patrones MIDI</li>
+            <li>Tutoriales de bajo, sintes y groove</li>
+            <li>Sesiones de trabajo en Ableton</li>
+          </ul>
+          <a class="btn" href="#">Unirme en Patreon</a>
         </article>
       </div>
     </section>
