@@ -784,6 +784,21 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     { x: 98, y: 90, s: 320, b: 32, o: 0.18, c: 1, d: 1.2 }
   ];
   var bits = [];
+  // movimiento continuo: cada círculo recorre un lazo suave y lento (animación en la tarjeta gráfica, no en JS)
+  function drift(el, n, d) {
+    if (calm || !el.animate) return;
+    var seed = function (k) { var v = Math.sin(n * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); };
+    var ax = 50 + seed(1) * 70 + d * 60, ay = 40 + seed(2) * 60 + d * 50;
+    var dur = (34 + seed(3) * 36) * 1000;
+    var k = seed(4) > 0.5 ? 2 : 1;
+    var p1 = seed(5) * 6.283, p2 = seed(6) * 6.283;
+    var N = 48, frames = [];
+    for (var i = 0; i <= N; i++) {
+      var t = i / N * 6.283185;
+      frames.push({ translate: (ax * Math.sin(t + p1)).toFixed(1) + 'px ' + (ay * Math.sin(k * t + p2)).toFixed(1) + 'px' });
+    }
+    el.animate(frames, { duration: dur, iterations: Infinity, easing: 'linear', delay: -seed(7) * dur });
+  }
   function lights(host, list) {
     if (!host) return;
     list.forEach(function (o) {
@@ -795,6 +810,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       el.style.setProperty('--c', 'var(--s' + o.c + ')');
       host.appendChild(el);
       bits.push({ el: el, d: o.d });
+      drift(el, bits.length, o.d);
     });
   }
   var hosts = document.querySelectorAll('.bokeh');
