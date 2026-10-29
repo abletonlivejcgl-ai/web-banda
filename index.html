@@ -1,5 +1,23 @@
-<title>Banda Funk Electrónico</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F0B16">
+<meta name="description" content="Greasy Circuits: covers de funk electrónico con bajo funky y sintetizadores. Toca tu propio groove, haz el test de qué funkero eres y pide la próxima canción.">
+<link rel="canonical" href="https://abletonlivejcgl-ai.github.io/web-banda/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230F0B16'/%3E%3Crect x='7' y='7' width='8' height='8' rx='2' fill='%23FF3F8E'/%3E%3Crect x='17' y='17' width='8' height='8' rx='2' fill='%23FFC23D'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Greasy Circuits">
+<meta property="og:title" content="Greasy Circuits · Banda de covers de funk electrónico">
+<meta property="og:description" content="Greasy Circuits: covers de funk electrónico con bajo funky y sintetizadores. Toca tu propio groove, haz el test de qué funkero eres y pide la próxima canción.">
+<meta property="og:url" content="https://abletonlivejcgl-ai.github.io/web-banda/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Greasy Circuits · Banda de covers de funk electrónico">
+<meta name="twitter:description" content="Greasy Circuits: covers de funk electrónico con bajo funky y sintetizadores. Toca tu propio groove, haz el test de qué funkero eres y pide la próxima canción.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Greasy Circuits","genre":"Funk electrónico","url":"https://abletonlivejcgl-ai.github.io/web-banda/","description":"Greasy Circuits: covers de funk electrónico con bajo funky y sintetizadores. Toca tu propio groove, haz el test de qué funkero eres y pide la próxima canción."}</script>
+<title>Greasy Circuits · Banda de covers de funk electrónico</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* Layout: dark stage. Hero splits copy (left) from a playable 16-step funk sequencer (right).
@@ -296,6 +314,8 @@ footer p { margin: 0; align-self: center; }
   .tier, .form { padding: 22px; }
 }
 </style>
+</head>
+<body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-ig" viewBox="0 0 24 24">
@@ -323,14 +343,15 @@ footer p { margin: 0; align-self: center; }
 
 <div class="wrap">
   <header class="top">
-    <a class="logo" href="#">Nombre</a>
+    <a class="logo" href="#">Greasy Circuits</a>
     <nav aria-label="Secciones">
-      <a href="#comunidad">Comunidad</a>
-      <a href="#videos">Vídeos</a>
+      <a href="#comunidad" hidden>Comunidad</a>
+      <a href="#videos" hidden>Vídeos</a>
       <a href="#test">Test</a>
-      <a href="#banda">La banda</a>
+      <a href="#banda" hidden>La banda</a>
+      <a href="#participa">Participa</a>
       <a href="#directos" hidden>Directos</a>
-      <a href="#membresia">Membresía</a>
+      <a href="#membresia" hidden>Membresía</a>
       <a href="#bookings" hidden>Contratación</a>
     </nav>
   </header>
@@ -339,9 +360,10 @@ footer p { margin: 0; align-self: center; }
     <section class="hero" aria-labelledby="titulo">
       <div>
         <p class="eyebrow">Banda de covers · Funk electrónico</p>
-        <h1 id="titulo">Nombre de la banda</h1>
-        <p class="lead">Los temas que ya te sabes, con bajo funky y sintetizadores. Mira los vídeos, sigue a la banda y ven a bailar.</p>
-        <div class="cta">
+        <h1 id="titulo">Greasy Circuits</h1>
+        <p class="lead">Los temas que ya te sabes, con bajo funky y sintetizadores. Toca tu propio groove, descubre qué funkero eres y pídenos el próximo tema.</p>
+        <!-- OCULTO hasta tener las redes: quitar hidden -->
+        <div class="cta" hidden>
           <a class="btn icon primary" href="#" aria-label="Instagram @tu_usuario" title="Instagram"><svg class="ico" aria-hidden="true"><use href="#i-ig"/></svg></a>
           <a class="btn icon" href="#" aria-label="TikTok" title="TikTok"><svg class="ico" aria-hidden="true"><use href="#i-tt"/></svg></a>
           <a class="btn icon" href="#" aria-label="YouTube" title="YouTube"><svg class="ico" aria-hidden="true"><use href="#i-yt"/></svg></a>
@@ -368,7 +390,8 @@ footer p { margin: 0; align-self: center; }
       </div>
     </section>
 
-    <section class="sec" id="comunidad" aria-labelledby="h-comunidad">
+    <!-- OCULTO hasta tener el grupo de WhatsApp -->
+    <section class="sec" id="comunidad" aria-labelledby="h-comunidad" hidden>
       <div class="join">
         <div>
           <p class="eyebrow">Comunidad</p>
@@ -379,7 +402,8 @@ footer p { margin: 0; align-self: center; }
       </div>
     </section>
 
-    <section class="sec" id="videos" aria-labelledby="h-videos">
+    <!-- OCULTO hasta tener los vídeos -->
+    <section class="sec" id="videos" aria-labelledby="h-videos" hidden>
       <div class="sec-head">
         <p class="eyebrow">Vídeos</p>
         <h2 id="h-videos">Mira cómo suena</h2>
@@ -418,7 +442,8 @@ footer p { margin: 0; align-self: center; }
       </div>
     </section>
 
-    <section class="sec" id="banda" aria-labelledby="h-banda">
+    <!-- OCULTO hasta tener historia, foto y miembros -->
+    <section class="sec" id="banda" aria-labelledby="h-banda" hidden>
       <div class="about">
         <div class="story">
           <p class="eyebrow">La banda</p>
@@ -505,7 +530,8 @@ footer p { margin: 0; align-self: center; }
       <p class="after-list">¿No ves tu ciudad? Escríbenos y la ponemos en el mapa.</p>
     </section>
 
-    <section class="sec" id="membresia" aria-labelledby="h-membresia">
+    <!-- OCULTO hasta tener Patreon -->
+    <section class="sec" id="membresia" aria-labelledby="h-membresia" hidden>
       <div class="sec-head">
         <p class="eyebrow">Membresía</p>
         <h2 id="h-membresia">Entra en el backstage</h2>
@@ -617,12 +643,13 @@ footer p { margin: 0; align-self: center; }
   </main>
 
   <footer>
-    <nav aria-label="Redes">
+    <!-- OCULTO hasta tener las redes: quitar hidden -->
+    <nav aria-label="Redes" hidden>
       <a class="icon" href="#" aria-label="Instagram" title="Instagram"><svg class="ico" aria-hidden="true"><use href="#i-ig"/></svg></a>
       <a class="icon" href="#" aria-label="TikTok" title="TikTok"><svg class="ico" aria-hidden="true"><use href="#i-tt"/></svg></a>
       <a class="icon" href="#" aria-label="YouTube" title="YouTube"><svg class="ico" aria-hidden="true"><use href="#i-yt"/></svg></a>
     </nav>
-    <p>© 2026 Nombre de la banda</p>
+    <p>© 2026 Greasy Circuits</p>
   </footer>
 </div>
 
@@ -1168,16 +1195,18 @@ footer p { margin: 0; align-self: center; }
     left.appendChild(h);
     left.appendChild(el('p', 'res-tag', t.tag));
     left.appendChild(el('p', 'res-text', t.text));
+    if (t.song && t.song.charAt(0) !== '[') {
     var song = el('p', 'res-song');
-    song.appendChild(document.createTextNode('Tu canción para hoy: '));
-    song.appendChild(el('strong', null, t.song));
-    left.appendChild(song);
+      song.appendChild(document.createTextNode('Tu canción para hoy: '));
+      song.appendChild(el('strong', null, t.song));
+      left.appendChild(song);
+    }
 
     var actions = el('div', 'res-actions');
     var shareBtn = el('button', 'btn primary', 'Compartir mi tarjeta');
     shareBtn.type = 'button';
-    var join = el('a', 'btn', 'Únete a la comunidad');
-    join.href = '#comunidad';
+    var join = el('a', 'btn', 'Pide tu canción');
+    join.href = '#participa';
     var again = el('button', 'ghost', 'Repetir test');
     again.type = 'button';
     actions.appendChild(shareBtn);
@@ -1237,3 +1266,6 @@ footer p { margin: 0; align-self: center; }
   renderQ(false);
 })();
 </script>
+
+</body>
+</html>
