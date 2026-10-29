@@ -722,9 +722,11 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     var H = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
     ray.style.height = H + 'px';
     ray.style.width = W + 'px';
-    var mobile = W < 761;
-    var w0 = mobile ? 56 : 120, P = 2.4, cx = W / 2, N = 64, ratio = 0.78;
-    function span(y) { var t = Math.min(1, Math.max(0, y / H)); return w0 + (W - w0) * Math.pow(t, P); }
+    var mobile = W < 761, cx = W / 2;
+    var w = mobile ? 6 : Math.max(10, Math.min(26, W / 50)), g = w * 0.38;
+    var k = W / (6 * w + 5 * g);
+    var fan = mobile ? 260 : 440;
+    var y0 = Math.max(200, H - fan), d = H - y0;
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('width', W); svg.setAttribute('height', H);
     svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
@@ -737,15 +739,14 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     var grp = document.createElementNS(NS, 'g');
     grp.setAttribute('mask', 'url(#rayMask)');
     for (var i = 0; i < 6; i++) {
-      var Ls = [], Rs = [];
-      for (var n = 0; n <= N; n++) {
-        var y = H * n / N, Wt = span(y), left = cx - Wt / 2, sw = Wt / 6 * ratio, gap = (Wt - 6 * sw) / 5;
-        var xl = left + i * (sw + gap);
-        Ls.push((xl).toFixed(1) + ' ' + y.toFixed(1));
-        Rs.push((xl + sw).toFixed(1) + ' ' + y.toFixed(1));
-      }
+      var xl = cx + (i - 3) * (w + g) + g / 2, xr = xl + w;
+      var xlb = cx + (xl - cx) * k, xrb = cx + (xr - cx) * k;
+      function edge(x, xb) { return [x, y0 + 0.45 * d, x + (xb - x) * 0.45, y0 + 0.7 * d, xb, H]; }
+      var L = edge(xl, xlb), R = edge(xr, xrb);
+      var dpath = 'M' + xl + ' 0 L' + xl + ' ' + y0 + ' C' + L.join(' ') + ' L' + xrb + ' ' + H +
+        ' C' + R[2] + ' ' + R[3] + ' ' + R[0] + ' ' + R[1] + ' ' + xr + ' ' + y0 + ' L' + xr + ' 0 Z';
       var pa = document.createElementNS(NS, 'path');
-      pa.setAttribute('d', 'M' + Ls.join(' L') + ' L' + Rs.reverse().join(' L') + ' Z');
+      pa.setAttribute('d', dpath);
       pa.setAttribute('fill', 'var(--s' + (i + 1) + ')');
       grp.appendChild(pa);
     }
