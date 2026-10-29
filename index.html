@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0F0B16">
+<meta name="theme-color" content="#0A0A0C">
 <meta name="description" content="Meigo Groove: covers de funk electrónico con alma gallega y cubana, bajo funky y sintetizadores. Toca tu propio groove, haz el test de qué funkero eres y pide la próxima canción.">
 <link rel="canonical" href="https://abletonlivejcgl-ai.github.io/web-banda/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230F0B16'/%3E%3Crect x='7' y='7' width='8' height='8' rx='2' fill='%23FF3F8E'/%3E%3Crect x='17' y='17' width='8' height='8' rx='2' fill='%23FFC23D'/%3E%3C/svg%3E">
@@ -23,17 +23,23 @@
 /* Layout: dark stage. Hero splits copy (left) from a playable 16-step funk sequencer (right).
    Below: vertical video tiles, a shows list, booking card. One bold move: the hard pink shadow on the band name. */
 :root {
-  --bg: #0F0B16;
-  --surface: #171120;
-  --raise: #231A33;
-  --raise-beat: #31244A;
-  --line: #31254A;
-  --fg: #F4EFE8;
-  --soft: #DCD4EA;
-  --muted: #B0A6C4;
-  --pink: #FF3F8E;
-  --sun: #FFC23D;
-  --ink: #0F0B16;
+  --bg: #0A0A0C;
+  --surface: #141217;
+  --raise: #211E26;
+  --raise-beat: #2E2A36;
+  --line: #3A3541;
+  --fg: #F6EBD6;
+  --soft: #E4D6BC;
+  --muted: #AEA696;
+  --pink: #F0502F;
+  --sun: #F2B134;
+  --ink: #0A0A0C;
+  --acc-rgb: 240, 80, 47;
+  --acc2-rgb: 242, 177, 52;
+  --bg-rgb: 10, 10, 12;
+  --r-kick: #F0502F; --r-snare: #F2B134; --r-hat: #4FB8BA; --r-bass: #EE7A2C;
+  --s1: #E5392F; --s2: #EE7A2C; --s3: #F2B134; --s4: #F7E3BC; --s5: #4FB8BA; --s6: #2E6E8C;
+  --dw: 900;
   --display: 'Unbounded', 'Arial Black', system-ui, sans-serif;
   --body: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
@@ -65,7 +71,7 @@ a { color: inherit; }
 .top nav a:hover { color: var(--fg); }
 
 /* hero */
-.hero { min-height: calc(100vh - 74px); min-height: calc(100svh - 74px); display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; padding-block: 48px 72px; }
+.hero { position: relative; isolation: isolate; min-height: calc(100vh - 74px); min-height: calc(100svh - 74px); display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; padding-block: 48px 72px; }
 .hero > * { min-width: 0; }
 .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sun); margin: 0; }
 h1 {
@@ -83,7 +89,7 @@ h1 {
 }
 .btn:hover { border-color: var(--pink); }
 .btn.primary { background: var(--pink); border-color: var(--pink); color: var(--ink); }
-.btn.primary:hover { background: #ff5fa2; border-color: #ff5fa2; }
+.btn.primary:hover { filter: brightness(1.12); }
 .btn .handle { font-family: var(--mono); font-weight: 400; font-size: 12px; opacity: 0.85; }
 
 /* sequencer */
@@ -96,7 +102,7 @@ h1 {
   width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--pink); color: var(--ink);
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex: none;
 }
-.play:hover { background: #ff5fa2; }
+.play:hover { filter: brightness(1.12); }
 .tempo { display: flex; flex-direction: column; gap: 4px; flex: 1 1 140px; min-width: 0; }
 .tempo-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 .tempo-row output { color: var(--fg); font-variant-numeric: tabular-nums; }
@@ -110,19 +116,22 @@ h1 {
 .step { height: 34px; min-width: 0; padding: 0; border: 0; border-radius: 6px; background: var(--raise); cursor: pointer; }
 .step.beat { background: var(--raise-beat); }
 .step:hover { filter: brightness(1.35); }
-.step[aria-pressed="true"] { background: var(--pink); }
-.track[data-row="bass"] .step[aria-pressed="true"] { background: var(--sun); }
+.step[aria-pressed="true"] { background: var(--r-kick); }
+.track[data-row="kick"] .step[aria-pressed="true"] { background: var(--r-kick); }
+.track[data-row="snare"] .step[aria-pressed="true"] { background: var(--r-snare); }
+.track[data-row="hat"] .step[aria-pressed="true"] { background: var(--r-hat); }
+.track[data-row="bass"] .step[aria-pressed="true"] { background: var(--r-bass); }
 .step.now { box-shadow: inset 0 0 0 2px var(--fg); }
 .seq.thump { animation: thump 0.35s ease-out; }
 @keyframes thump {
-  0% { box-shadow: 0 0 0 0 rgba(255, 63, 142, 0.5); transform: translateY(3px); }
+  0% { box-shadow: 0 0 0 0 rgba(var(--acc-rgb), 0.5); transform: translateY(3px); }
   40% { transform: translateY(-1px); }
-  100% { box-shadow: 0 0 0 18px rgba(255, 63, 142, 0); transform: none; }
+  100% { box-shadow: 0 0 0 18px rgba(var(--acc-rgb), 0); transform: none; }
 }
 @media (prefers-reduced-motion: reduce) { .seq.thump { animation: none; } }
 
 /* la página baila al ritmo del secuenciador (solo mientras suena) */
-#flash { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 40%, rgba(255, 63, 142, 0.34), rgba(255, 63, 142, 0) 70%); }
+#flash { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 40%, rgba(var(--acc-rgb), 0.34), rgba(var(--acc-rgb), 0) 70%); }
 #flash.go { animation: flash 0.28s ease-out; }
 @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
 h1.p-kick { transform-origin: left center; animation: kickTitle 0.24s ease-out; }
@@ -131,7 +140,7 @@ h1.p-kick { transform-origin: left center; animation: kickTitle 0.24s ease-out; 
   100% { transform: scale(1); text-shadow: 0.045em 0.045em 0 var(--pink); }
 }
 .sidenav.p-hat .dot { animation: hatDot 0.14s ease-out; }
-@keyframes hatDot { from { box-shadow: 0 0 0 5px rgba(255, 194, 61, 0.7); } to { box-shadow: 0 0 0 0 rgba(255, 194, 61, 0); } }
+@keyframes hatDot { from { box-shadow: 0 0 0 5px rgba(var(--acc2-rgb), 0.7); } to { box-shadow: 0 0 0 0 rgba(var(--acc2-rgb), 0); } }
 @media (prefers-reduced-motion: reduce) { #flash, h1.p-kick, .sidenav.p-hat .dot { animation: none; } }
 
 /* sections */
@@ -146,7 +155,7 @@ h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.6rem, 4vw
   --a: #1E1530; --b: #271C3C;
   position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;
   aspect-ratio: 9 / 14; max-width: 100%; border-radius: 14px; padding: 20px; text-decoration: none; overflow: hidden; min-width: 0;
-  background: linear-gradient(to top, rgba(15, 11, 22, 0.92), rgba(15, 11, 22, 0) 62%), repeating-linear-gradient(90deg, var(--a) 0 14px, var(--b) 14px 28px);
+  background: linear-gradient(to top, rgba(var(--bg-rgb), 0.92), rgba(var(--bg-rgb), 0) 62%), repeating-linear-gradient(90deg, var(--a) 0 14px, var(--b) 14px 28px);
   border: 1px solid var(--line);
 }
 .tile:nth-child(2) { --a: #2E1329; --b: #3A1833; }
@@ -240,7 +249,7 @@ h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.6rem, 4vw
 }
 .sidenav:not(.show) a { transition-delay: calc((var(--n, 5) - 1 - var(--i)) * 80ms); }
 .sidenav.show a { opacity: 1; transform: none; }
-.sidenav .lbl { max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; border-radius: 6px; background: rgba(15, 11, 22, 0.88); padding: 4px 0; transition: max-width 0.25s ease, opacity 0.2s ease, padding 0.25s ease; }
+.sidenav .lbl { max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; border-radius: 6px; background: rgba(var(--bg-rgb), 0.88); padding: 4px 0; transition: max-width 0.25s ease, opacity 0.2s ease, padding 0.25s ease; }
 .sidenav a:hover .lbl, .sidenav a:focus-visible .lbl, .sidenav a[aria-current="true"] .lbl { max-width: 200px; opacity: 1; padding: 4px 8px; }
 .sidenav .arrow { width: 10px; height: 10px; flex: none; display: grid; place-items: center; overflow: visible; transition: color 0.2s ease, transform 0.2s ease; }
 .sidenav .arrow svg { width: 16px; height: 16px; flex: none; }
@@ -313,6 +322,15 @@ footer p { margin: 0; align-self: center; }
   .row2 { grid-template-columns: 1fr; }
   .tier, .form { padding: 22px; }
 }
+
+/* ===== decoración: franjas curvas de cinta ===== */
+.deco { position: absolute; z-index: -1; pointer-events: none; top: 0; right: 0; width: 100%; height: 60%; filter: drop-shadow(0 0 14px rgba(238, 122, 44, 0.28)); }
+.deco svg { width: 100%; height: 100%; display: block; }
+@media (max-width: 760px) { .deco { opacity: 0.5; height: 110px; } }
+body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 6px; z-index: 40; background: linear-gradient(90deg, var(--s1) 0 16.66%, var(--s2) 0 33.33%, var(--s3) 0 50%, var(--s4) 0 66.66%, var(--s5) 0 83.33%, var(--s6) 0); }
+.tile:nth-child(1) { --a: color-mix(in srgb, var(--s1) 24%, var(--bg)); --b: color-mix(in srgb, var(--s1) 36%, var(--bg)); }
+.tile:nth-child(2) { --a: color-mix(in srgb, var(--s3) 24%, var(--bg)); --b: color-mix(in srgb, var(--s3) 36%, var(--bg)); }
+.tile:nth-child(3) { --a: color-mix(in srgb, var(--s5) 24%, var(--bg)); --b: color-mix(in srgb, var(--s5) 36%, var(--bg)); }
 </style>
 </head>
 <body>
@@ -358,6 +376,7 @@ footer p { margin: 0; align-self: center; }
 
   <main>
     <section class="hero" aria-labelledby="titulo">
+      <div class="deco deco-arcs" aria-hidden="true"></div>
       <div>
         <p class="eyebrow">Covers de funk electrónico · Alma gallega y cubana</p>
         <h1 id="titulo">Meigo Groove</h1>
@@ -654,6 +673,23 @@ footer p { margin: 0; align-self: center; }
 </div>
 
 <script>
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var arcs = document.querySelector('.deco-arcs');
+  var svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 1200 500');
+  svg.setAttribute('preserveAspectRatio', 'xMaxYMin slice');
+  for (var k = 0; k < 6; k++) {
+    var R = 150 - k * 22, cy = 210, cx = 950;
+    var pa = document.createElementNS(NS, 'path');
+    pa.setAttribute('d', 'M-60 ' + (cy - R) + ' H' + cx + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + ' V520');
+    pa.setAttribute('fill', 'none');
+    pa.setAttribute('stroke', 'var(--s' + (k + 1) + ')');
+    pa.setAttribute('stroke-width', '17');
+    svg.appendChild(pa);
+  }
+  arcs.appendChild(svg);
+  })();
 (function () {
   var ROWS = [
     { id: 'kick',  label: 'Bombo',  on: [0, 4, 8, 12] },
@@ -1116,27 +1152,28 @@ footer p { margin: 0; align-self: center; }
       document.fonts.load('500 40px "Instrument Sans"'),
       document.fonts.load('400 30px "JetBrains Mono"')
     ]).catch(function () {}) : Promise.resolve();
+    function cv(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
     return fonts.then(function () {
       var W = 1080, H = 1920, M = 90;
       var c = document.createElement('canvas');
       c.width = W; c.height = H;
       var x = c.getContext('2d');
-      x.fillStyle = '#0F0B16';
+      x.fillStyle = cv('--bg');
       x.fillRect(0, 0, W, H);
       var g = x.createRadialGradient(W * 0.82, H * 0.16, 0, W * 0.82, H * 0.16, 760);
-      g.addColorStop(0, 'rgba(255,63,142,0.55)');
-      g.addColorStop(1, 'rgba(255,63,142,0)');
+      g.addColorStop(0, 'rgba(' + cv('--acc-rgb') + ',0.55)');
+      g.addColorStop(1, 'rgba(' + cv('--acc-rgb') + ',0)');
       x.fillStyle = g;
       x.fillRect(0, 0, W, H);
 
-      x.fillStyle = '#FFC23D';
+      x.fillStyle = cv('--sun');
       x.font = '400 34px "JetBrains Mono", monospace';
       x.fillText('¿QUÉ TIPO DE FUNKERO ERES?', M, 210);
 
       var name = t.name.toUpperCase();
       var size = 124, lines;
       while (size > 56) {
-        x.font = '900 ' + size + 'px Unbounded, "Arial Black", sans-serif';
+        x.font = cv('--dw') + ' ' + size + 'px ' + cv('--display');
         var tooWide = name.split(' ').some(function (w) { return x.measureText(w).width > W - 2 * M - 12; });
         if (!tooWide) break;
         size -= 4;
@@ -1144,16 +1181,16 @@ footer p { margin: 0; align-self: center; }
       lines = wrap(x, name, W - 2 * M - 12);
       var y = 420;
       lines.forEach(function (l) {
-        x.fillStyle = '#FF3F8E';
+        x.fillStyle = cv('--pink');
         x.fillText(l, M + 8, y + 8);
-        x.fillStyle = '#F4EFE8';
+        x.fillStyle = cv('--fg');
         x.fillText(l, M, y);
         y += Math.round(size * 1.12);
       });
 
       y += 30;
       x.font = '500 50px "Instrument Sans", system-ui, sans-serif';
-      x.fillStyle = '#DCD4EA';
+      x.fillStyle = cv('--soft');
       wrap(x, t.tag, W - 2 * M).forEach(function (l) { x.fillText(l, M, y); y += 66; });
 
       var rows = [[0, 4, 8, 12], [4, 12], [2, 6, 10, 14, 15], [0, 3, 6, 8, 11, 14]];
@@ -1161,19 +1198,19 @@ footer p { margin: 0; align-self: center; }
       rows.forEach(function (on, r) {
         for (var i = 0; i < 16; i++) {
           rr(x, M + i * (cell + gap), gy + r * (cell + gap), cell, cell, 9);
-          x.fillStyle = on.indexOf(i) > -1 ? (r === 3 ? '#FFC23D' : '#FF3F8E') : '#231A33';
+          x.fillStyle = on.indexOf(i) > -1 ? cv(['--r-kick', '--r-snare', '--r-hat', '--r-bass'][r]) : cv('--raise');
           x.fill();
         }
       });
 
-      x.fillStyle = '#B0A6C4';
+      x.fillStyle = cv('--muted');
       x.font = '400 32px "JetBrains Mono", monospace';
       x.fillText('HAZ EL TEST TÚ TAMBIÉN', M, 1640);
       var band = (document.getElementById('titulo').textContent || '').toUpperCase();
-      x.fillStyle = '#F4EFE8';
-      x.font = '700 54px Unbounded, "Arial Black", sans-serif';
+      x.fillStyle = cv('--fg');
+      x.font = (cv('--dw') === '400' ? '400' : '700') + ' 54px ' + cv('--display');
       x.fillText(band, M, 1730);
-      x.fillStyle = '#B0A6C4';
+      x.fillStyle = cv('--muted');
       x.font = '400 34px "JetBrains Mono", monospace';
       x.fillText(location.host || 'tu-web.com', M, 1795);
 
