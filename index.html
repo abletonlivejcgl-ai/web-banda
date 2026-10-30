@@ -745,6 +745,31 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   var NS = 'http://www.w3.org/2000/svg';
   var ray = document.querySelector('.deco-ray');
   var timer = 0;
+  // grano de película: baldosa de ruido en blanco y negro con transparencia, generada una sola vez
+  var grainURL = '';
+  function makeGrain() {
+    if (grainURL) return grainURL;
+    try {
+      var N = 256, c = document.createElement('canvas');
+      c.width = N; c.height = N;
+      var x = c.getContext('2d'), im = x.createImageData(N, N), d = im.data, seed = 1234567;
+      function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+      for (var i = 0; i < N * N; i++) {
+        var r = rnd(), a = rnd(), o = i * 4;
+        if (r < 0.58) { d[o] = 8; d[o + 1] = 6; d[o + 2] = 10; d[o + 3] = Math.round(a * a * 255 * 0.62); }
+        else { d[o] = 247; d[o + 1] = 232; d[o + 2] = 200; d[o + 3] = Math.round(a * a * 255 * 0.45); }
+      }
+      x.putImageData(im, 0, 0);
+      // motas más gruesas, escasas, para que no parezca ruido digital
+      for (var k = 0; k < 520; k++) {
+        var px = Math.floor(rnd() * N), py = Math.floor(rnd() * N), sz = 2 + Math.floor(rnd() * 2);
+        x.fillStyle = rnd() < 0.6 ? 'rgba(8,6,10,' + (0.25 + rnd() * 0.4).toFixed(2) + ')' : 'rgba(247,232,200,' + (0.15 + rnd() * 0.3).toFixed(2) + ')';
+        x.fillRect(px, py, sz, sz);
+      }
+      grainURL = c.toDataURL('image/png');
+    } catch (e) { grainURL = ''; }
+    return grainURL;
+  }
   function buildRay() {
     var hero = document.querySelector('.hero'), seq = document.getElementById('seq');
     var W = document.documentElement.clientWidth;
@@ -765,6 +790,8 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       '<linearGradient id="rayFade2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#a8a8a8"/></linearGradient>' +
       '<mask id="rayMask" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '"><rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#000"/>' +
       '<rect x="0" y="0" width="' + W + '" height="420" fill="url(#rayFade)"/><rect x="0" y="420" width="' + W + '" height="' + Math.max(0, H - 420) + '" fill="url(#rayFade2)"/></mask>';
+    var grain = makeGrain();
+    if (grain) defs.innerHTML += '<pattern id="rayGrain" patternUnits="userSpaceOnUse" width="256" height="256"><image href="' + grain + '" width="256" height="256"/></pattern>';
     svg.appendChild(defs);
     var grp = document.createElementNS(NS, 'g');
     grp.setAttribute('mask', 'url(#rayMask)');
@@ -779,6 +806,12 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       pa.setAttribute('d', dpath);
       pa.setAttribute('fill', 'var(--s' + (i + 1) + ')');
       grp.appendChild(pa);
+      if (grain) {
+        var pg = document.createElementNS(NS, 'path');
+        pg.setAttribute('d', dpath);
+        pg.setAttribute('fill', 'url(#rayGrain)');
+        grp.appendChild(pg);
+      }
     }
     svg.appendChild(grp);
     ray.textContent = '';
