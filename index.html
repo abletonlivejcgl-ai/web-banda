@@ -139,10 +139,12 @@ h1 {
 .knob i::before { content: ''; position: absolute; left: 50%; top: 3px; width: 2.5px; height: 36%; margin-left: -1.25px; border-radius: 2px; background: var(--led, var(--sun)); box-shadow: 0 0 5px var(--led, var(--sun)); }
 .knob.big { width: 60px; height: 60px; }
 .knob.big i::before { top: 5px; width: 3px; margin-left: -1.5px; height: 32%; }
-.tracks { display: grid; gap: 14px; }
+.tracks { display: grid; gap: 14px; min-height: 204px; }
 .chase-row, .ruler-row { display: grid; grid-template-columns: 92px 1fr; gap: 10px; }
 .chase-row { margin-bottom: -4px; }
 .chase, .ruler { display: grid; grid-template-columns: repeat(16, 1fr); gap: 5px; }
+.chase { min-height: 6px; }
+.ruler { min-height: 16px; }
 .chase i { display: block; height: 5px; border-radius: 3px; background: #100e12; box-shadow: 0 0 0 1px rgba(0,0,0,0.7) inset; }
 .chase i.on { background: var(--s3); box-shadow: 0 0 8px 1px var(--s3); }
 .ruler span { text-align: center; font-family: var(--mono); font-size: 9px; color: var(--muted); }
@@ -367,6 +369,7 @@ footer p { margin: 0; align-self: center; }
   .ask { grid-template-columns: 1fr; }
 }
 @media (max-width: 620px), (min-width: 901px) and (max-width: 1100px) {
+  .tracks { min-height: 598px; }
   .track { grid-template-columns: 1fr; gap: 8px; }
   .track-head { justify-content: flex-start; gap: 14px; }
   .steps { grid-template-columns: repeat(8, 1fr); gap: 6px; }
@@ -817,9 +820,10 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   var ray = document.querySelector('.deco-ray');
   var timer = 0;
   // grano de película: baldosa de ruido en blanco y negro con transparencia, generada una sola vez
-  var grainURL = '';
-  function makeGrain() {
-    if (grainURL) return grainURL;
+  var grainURL = '', grainTried = false, lastKey = '';
+  function loadGrain(done) {
+    if (grainTried) return;
+    grainTried = true;
     try {
       var N = 256, c = document.createElement('canvas');
       c.width = N; c.height = N;
@@ -837,15 +841,18 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
         x.fillStyle = rnd() < 0.6 ? 'rgba(8,6,10,' + (0.25 + rnd() * 0.4).toFixed(2) + ')' : 'rgba(247,232,200,' + (0.15 + rnd() * 0.3).toFixed(2) + ')';
         x.fillRect(px, py, sz, sz);
       }
-      grainURL = c.toDataURL('image/png');
+      // se codifica fuera del hilo principal y se usa como blob (antes: PNG de 220 KB en base64 dentro del SVG)
+      c.toBlob(function (b) { if (b) { grainURL = URL.createObjectURL(b); done(); } }, 'image/png');
     } catch (e) { grainURL = ''; }
-    return grainURL;
   }
   function buildRay() {
     var hero = document.querySelector('.hero'), seq = document.getElementById('seq');
     var W = document.documentElement.clientWidth;
     // altura de la página sin tocar estilos antes de medir (el rayo es absoluto y no cuenta en offsetHeight del body)
     var H = Math.ceil(document.body.getBoundingClientRect().height + (window.pageYOffset || 0) + document.body.getBoundingClientRect().top);
+    var key = W + 'x' + H + (grainURL ? 'g' : '');
+    if (key === lastKey) return;
+    lastKey = key;
     ray.style.height = H + 'px';
     ray.style.width = W + 'px';
     var mobile = W < 761, cx = W / 2;
@@ -861,7 +868,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       '<linearGradient id="rayFade2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#a8a8a8"/></linearGradient>' +
       '<mask id="rayMask" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '"><rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#000"/>' +
       '<rect x="0" y="0" width="' + W + '" height="420" fill="url(#rayFade)"/><rect x="0" y="420" width="' + W + '" height="' + Math.max(0, H - 420) + '" fill="url(#rayFade2)"/></mask>';
-    var grain = makeGrain();
+    var grain = grainURL;
     if (grain) defs.innerHTML += '<pattern id="rayGrain" patternUnits="userSpaceOnUse" width="256" height="256"><image href="' + grain + '" width="256" height="256"/></pattern>';
     svg.appendChild(defs);
     var grp = document.createElementNS(NS, 'g');
@@ -889,6 +896,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     ray.appendChild(svg);
   }
   buildRay();
+  loadGrain(buildRay);
   window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(buildRay, 120); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildRay);
   if (window.ResizeObserver) new ResizeObserver(function () { clearTimeout(timer); timer = setTimeout(buildRay, 150); }).observe(document.body);
