@@ -1314,7 +1314,37 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     x.closePath();
   }
 
-  function buildCard(t) {
+  /* Tarjeta generativa: todo sobre una retícula de 16 columnas (paso 60, raya 48, hueco 12) */
+  function rng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var CARD_PAL = ['#E5392F', '#EE7A2C', '#F2B134', '#F7E3BC', '#4FB8BA', '#2E6E8C'];
+  var CARD_DOM = {
+    P: ['#E5392F', '229,57,47'], K: ['#EE7A2C', '238,122,44'], S: ['#F2B134', '242,177,52'],
+    B: ['#4FB8BA', '79,184,186'], L: ['#3F8FBA', '63,143,186']
+  };
+  function loadLogo() {
+    return new Promise(function (resolve) {
+      try {
+        var svg = document.querySelector('.logo-m');
+        if (!svg) return resolve(null);
+        var str = new XMLSerializer().serializeToString(svg);
+        str = str.replace('<svg ', '<svg width="322" height="239" ');
+        var im = new Image();
+        im.onload = function () { resolve(im); };
+        im.onerror = function () { resolve(null); };
+        im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+      } catch (e) { resolve(null); }
+    });
+  }
+
+  function buildCard(t, key) {
     var fonts = document.fonts && document.fonts.load ? Promise.all([
       document.fonts.load('900 80px Unbounded'),
       document.fonts.load('700 40px Unbounded'),
@@ -1322,66 +1352,134 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       document.fonts.load('400 30px "JetBrains Mono"')
     ]).catch(function () {}) : Promise.resolve();
     function cv(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-    return fonts.then(function () {
-      var W = 1080, H = 1920, M = 90;
+    return Promise.all([fonts, loadLogo()]).then(function (res) {
+      var mImg = res[1];
+      var W = 1080, H = 1920, P = 60, SW = 48, X0 = 66, RIGHT = X0 + 15 * P + SW;
+      function gx(n) { return X0 + P * n; }
+      var seedStr = picks.join('') + '|' + Math.floor(Math.random() * 1e9);
+      var seed = 0;
+      for (var si = 0; si < seedStr.length; si++) seed = (Math.imul(seed, 31) + seedStr.charCodeAt(si)) | 0;
+      var R = rng(seed);
+      function pick(a) { return a[Math.floor(R() * a.length)]; }
+      function ri(a, b) { return a + Math.floor(R() * (b - a + 1)); }
+      var BG = cv('--bg'), CREAM = cv('--fg');
+      var dom = CARD_DOM[key] || CARD_DOM.P;
+
       var c = document.createElement('canvas');
       c.width = W; c.height = H;
       var x = c.getContext('2d');
-      x.fillStyle = cv('--bg');
-      x.fillRect(0, 0, W, H);
-      var g = x.createRadialGradient(W * 0.82, H * 0.16, 0, W * 0.82, H * 0.16, 760);
-      g.addColorStop(0, 'rgba(' + cv('--acc-rgb') + ',0.55)');
-      g.addColorStop(1, 'rgba(' + cv('--acc-rgb') + ',0)');
-      x.fillStyle = g;
-      x.fillRect(0, 0, W, H);
+      var pal = CARD_PAL.slice(), rot = ri(0, 5);
+      pal = pal.slice(rot).concat(pal.slice(0, rot));
+      if (R() < 0.5) pal.reverse();
 
-      x.fillStyle = cv('--sun');
-      x.font = '400 34px "JetBrains Mono", monospace';
-      x.fillText('¿QUÉ TIPO DE FUNKERO ERES?', M, 210);
+      x.fillStyle = BG; x.fillRect(0, 0, W, H);
+      var gX = pick([0, W / 2, W]), gY = P * ri(2, 8);
+      var g = x.createRadialGradient(gX, gY, 0, gX, gY, W * 0.85);
+      g.addColorStop(0, 'rgba(' + dom[1] + ',0.30)');
+      g.addColorStop(1, 'rgba(10,10,12,0)');
+      x.fillStyle = g; x.fillRect(0, 0, W, H);
 
-      var name = t.name.toUpperCase();
-      var size = 124, lines;
-      while (size > 56) {
+      var fam = pick(['fan', 'rings', 'waves', 'diag']), i;
+      x.save();
+      if (fam === 'fan') {
+        var c0 = ri(1, 9), y0 = P * ri(12, 15), k = pick([2, 3, 4]), cx = gx(c0) + (5 * P + SW) / 2, d = H - y0;
+        for (i = 0; i < 6; i++) {
+          var xl = gx(c0 + i), xr = xl + SW, xlb = cx + (xl - cx) * k, xrb = cx + (xr - cx) * k;
+          x.beginPath(); x.moveTo(xl, 0); x.lineTo(xl, y0);
+          x.bezierCurveTo(xl, y0 + 0.45 * d, xl + (xlb - xl) * 0.45, y0 + 0.7 * d, xlb, H);
+          x.lineTo(xrb, H);
+          x.bezierCurveTo(xr + (xrb - xr) * 0.45, y0 + 0.7 * d, xr, y0 + 0.45 * d, xr, y0);
+          x.lineTo(xr, 0); x.closePath();
+          x.fillStyle = pal[i]; x.fill();
+        }
+      } else if (fam === 'rings') {
+        var rx = pick([0, gx(4) - 6, W / 2, gx(12) - 6, W]), ry = P * pick([0, 4, 8, 12]), r0 = P * ri(1, 5);
+        for (i = 5; i >= 0; i--) {
+          x.beginPath(); x.arc(rx, ry, r0 + P * i + SW / 2, 0, 7);
+          x.lineWidth = SW; x.strokeStyle = pal[5 - i]; x.stroke();
+        }
+        if (r0 <= P * 2) { x.beginPath(); x.arc(rx, ry, r0 - 12, 0, 7); x.fillStyle = CREAM; x.fill(); }
+      } else if (fam === 'waves') {
+        var lam = P * pick([18, 12, 9]), A = P * pick([1, 2]), ph = pick([0, Math.PI / 2, Math.PI, Math.PI * 1.5]), top = P * ri(2, 5);
+        for (i = 0; i < 6; i++) {
+          x.beginPath();
+          for (var px = -10; px <= W + 10; px += 6) {
+            var py = top + i * P + SW / 2 + A * Math.sin(px / lam * 6.2832 + ph);
+            if (px === -10) x.moveTo(px, py); else x.lineTo(px, py);
+          }
+          x.lineWidth = SW; x.strokeStyle = pal[i]; x.stroke();
+        }
+      } else {
+        var dc = ri(0, 6), sg = pick([-1, 1]), yr = P * ri(4, 8);
+        for (i = 0; i < 6; i++) {
+          var dl = gx(dc + i), ya = -200, yb = 1200;
+          x.beginPath();
+          x.moveTo(dl + sg * (ya - yr), ya); x.lineTo(dl + SW + sg * (ya - yr), ya);
+          x.lineTo(dl + SW + sg * (yb - yr), yb); x.lineTo(dl + sg * (yb - yr), yb);
+          x.closePath(); x.fillStyle = pal[i]; x.fill();
+        }
+      }
+      x.restore();
+
+      x.globalCompositeOperation = 'screen';
+      for (i = 0; i < 5; i++) {
+        var bx = gx(ri(0, 15)) + SW / 2, by = P * ri(1, 14), br = P * pick([1, 1.5, 2]), bc = pick(pal);
+        var bg = x.createRadialGradient(bx, by, 0, bx, by, br);
+        bg.addColorStop(0, bc + '66'); bg.addColorStop(0.7, bc + '22'); bg.addColorStop(1, bc + '00');
+        x.fillStyle = bg; x.beginPath(); x.arc(bx, by, br, 0, 7); x.fill();
+      }
+      x.globalCompositeOperation = 'source-over';
+
+      var v = x.createLinearGradient(0, P * 14, 0, P * 20);
+      v.addColorStop(0, 'rgba(10,10,12,0)'); v.addColorStop(1, 'rgba(10,10,12,0.97)');
+      x.fillStyle = v; x.fillRect(0, P * 14, W, P * 6);
+      x.fillStyle = BG; x.fillRect(0, P * 20 - 1, W, H);
+
+      // retícula visible: columnas de 48 y líneas cada 60
+      x.lineWidth = 2;
+      x.strokeStyle = 'rgba(246,235,214,0.16)';
+      for (i = 0; i < 16; i++) x.strokeRect(gx(i), 0, SW, H);
+      x.strokeStyle = 'rgba(246,235,214,0.09)';
+      for (var gy2 = 0; gy2 <= H; gy2 += P) { x.beginPath(); x.moveTo(0, gy2); x.lineTo(W, gy2); x.stroke(); }
+
+      x.textBaseline = 'alphabetic'; x.textAlign = 'left';
+      x.font = '500 36px "JetBrains Mono", monospace'; x.fillStyle = cv('--sun');
+      x.fillText('MI TIPO DE FUNKERO', X0, P * 18);
+      x.textAlign = 'right'; x.fillStyle = cv('--muted');
+      x.fillText('Nº ' + String(1000 + Math.floor(R() * 9000)), RIGHT, P * 18);
+      x.textAlign = 'left';
+
+      var name = t.name.toUpperCase(), size = 108, lines;
+      while (size > 52) {
         x.font = cv('--dw') + ' ' + size + 'px ' + cv('--display');
-        var tooWide = name.split(' ').some(function (w) { return x.measureText(w).width > W - 2 * M - 12; });
+        var tooWide = name.split(' ').some(function (w) { return x.measureText(w).width > RIGHT - X0 - 14; });
         if (!tooWide) break;
         size -= 4;
       }
-      lines = wrap(x, name, W - 2 * M - 12);
-      var y = 420;
-      lines.forEach(function (l) {
-        x.fillStyle = cv('--pink');
-        x.fillText(l, M + 8, y + 8);
-        x.fillStyle = cv('--fg');
-        x.fillText(l, M, y);
-        y += Math.round(size * 1.12);
+      lines = wrap(x, name, RIGHT - X0 - 14);
+      lines.forEach(function (l, li) {
+        var ly = P * 20 + li * 2 * P;
+        x.fillStyle = dom[0]; x.fillText(l, X0 + 8, ly + 8);
+        x.fillStyle = CREAM; x.fillText(l, X0, ly);
       });
+      var ty = P * 20 + (lines.length - 1) * 2 * P + P * 1.5;
+      x.font = '500 46px "Instrument Sans", system-ui, sans-serif'; x.fillStyle = cv('--soft');
+      wrap(x, t.tag, RIGHT - X0).forEach(function (l) { x.fillText(l, X0, ty); ty += 58; });
 
-      y += 30;
-      x.font = '500 50px "Instrument Sans", system-ui, sans-serif';
-      x.fillStyle = cv('--soft');
-      wrap(x, t.tag, W - 2 * M).forEach(function (l) { x.fillText(l, M, y); y += 66; });
+      // caja de ritmos: las mismas 16 columnas que las rayas
+      var rows = ['--r-kick', '--r-snare', '--r-hat', '--r-clap'], dens = [0.28, 0.22, 0.5, 0.2];
+      for (var r = 0; r < 4; r++) for (var cc = 0; cc < 16; cc++) {
+        var on = R() < dens[r]; if (r === 0 && cc % 4 === 0) on = true;
+        x.fillStyle = on ? cv(rows[r]) : 'rgba(246,235,214,0.09)';
+        x.fillRect(gx(cc), P * 26 + r * 30, SW, 24);
+      }
 
-      var rows = [[0, 4, 8, 12], [4, 12], [2, 6, 10, 14, 15], [4, 12, 15]];
-      var cell = 46, gap = 10, gy = 1240;
-      rows.forEach(function (on, r) {
-        for (var i = 0; i < 16; i++) {
-          rr(x, M + i * (cell + gap), gy + r * (cell + gap), cell, cell, 9);
-          x.fillStyle = on.indexOf(i) > -1 ? cv(['--r-kick', '--r-snare', '--r-hat', '--r-clap'][r]) : cv('--raise');
-          x.fill();
-        }
-      });
-
-      x.fillStyle = cv('--muted');
-      x.font = '400 32px "JetBrains Mono", monospace';
-      x.fillText('HAZ EL TEST TÚ TAMBIÉN', M, 1640);
+      if (mImg) x.drawImage(mImg, X0, P * 29, 120, 89);
       var band = (document.getElementById('titulo').textContent || '').toUpperCase();
-      x.fillStyle = cv('--fg');
-      x.font = (cv('--dw') === '400' ? '400' : '700') + ' 54px ' + cv('--display');
-      x.fillText(band, M, 1730);
-      x.fillStyle = cv('--muted');
-      x.font = '400 34px "JetBrains Mono", monospace';
-      x.fillText(location.host || 'tu-web.com', M, 1795);
+      x.font = (cv('--dw') === '400' ? '400' : '700') + ' 40px ' + cv('--display');
+      x.fillStyle = CREAM; x.fillText(band, gx(3), P * 29 + 44);
+      x.font = '400 30px "JetBrains Mono", monospace'; x.fillStyle = cv('--muted');
+      x.fillText('Haz el test · ' + (location.host || 'tu-web.com'), gx(3), P * 29 + 89);
 
       return new Promise(function (resolve) {
         c.toBlob(function (b) { resolve({ blob: b, url: c.toDataURL('image/png') }); }, 'image/png');
@@ -1435,7 +1533,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     img.style.opacity = '0';
     img.style.transition = 'opacity 0.3s ease';
     img.addEventListener('load', function () { img.style.opacity = '1'; });
-    var cardPromise = buildCard(t);
+    var cardPromise = buildCard(t, key);
     cardPromise.then(function (card) { img.src = card.url; });
     cardPromise.catch(function () {
       img.hidden = true;
