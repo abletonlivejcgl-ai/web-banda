@@ -587,7 +587,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
         <p class="sub">Dinos qué quieres escuchar y entérate el primero cuando salga un vídeo nuevo.</p>
       </div>
       <div class="ask">
-        <form class="form" id="songForm" data-endpoint="https://formspree.io/f/xaeebvye">
+        <form class="form" id="songForm" data-endpoint="https://script.google.com/macros/s/AKfycbwoAVGiuQK2Iz9LQCQtf6QsRKrZOO4mgnVOBP7PHHaOUCWub7sxKQQJuSlQ6W9Xj1Hosg/exec">
           <h3>Pide una canción</h3>
           <p class="hint">Elegimos las más pedidas para los próximos vídeos.</p>
           <div hidden><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></div>
@@ -608,7 +608,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
           <p class="fstatus" role="status" aria-live="polite"></p>
         </form>
 
-        <form class="form" id="mailForm" data-endpoint="https://formspree.io/f/xaeebvye">
+        <form class="form" id="mailForm" data-endpoint="https://script.google.com/macros/s/AKfycbwoAVGiuQK2Iz9LQCQtf6QsRKrZOO4mgnVOBP7PHHaOUCWub7sxKQQJuSlQ6W9Xj1Hosg/exec">
           <h3>Avísame del próximo vídeo</h3>
           <p class="hint">Un correo solo cuando haya vídeo nuevo.</p>
           <div hidden><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></div>
@@ -1337,9 +1337,13 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       }
       var btn = form.querySelector('button[type=submit]');
       btn.disabled = true;
-      fetch(ep, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+      fetch(ep, { method: 'POST', body: new URLSearchParams(new FormData(form)) })
         .then(function (r) {
           if (!r.ok) throw new Error('send');
+          return r.json();
+        })
+        .then(function (d) {
+          if (!d || !d.ok) throw new Error('send');
           form.reset();
           status.textContent = okText;
         })
