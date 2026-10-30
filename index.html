@@ -18,7 +18,9 @@
 <meta name="twitter:description" content="Meigo Groove: covers de funk electrónico con alma gallega y cubana, bajo funky y sintetizadores. Toca tu propio groove, haz el test de qué funkero eres y pide la próxima canción.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Meigo Groove","genre":"Funk electrónico","url":"https://abletonlivejcgl-ai.github.io/web-banda/","description":"Meigo Groove: covers de funk electrónico con alma gallega y cubana, bajo funky y sintetizadores. Toca tu propio groove, haz el test de qué funkero eres y pide la próxima canción."}</script>
 <title>Meigo Groove · Covers de funk electrónico con alma gallega y cubana</title>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: dark stage. Hero splits copy (left) from a playable 16-step funk sequencer (right).
    Below: vertical video tiles, a shows list, booking card. One bold move: the hard pink shadow on the band name. */
@@ -344,15 +346,16 @@ body { isolation: isolate; }
 .bokeh { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
 .bokeh-front { z-index: 30; }
 .bokeh i { --k: 1; position: absolute; width: calc(var(--sz) * var(--k)); height: calc(var(--sz) * var(--k)); margin: calc(var(--sz) * var(--k) / -2) 0 0 calc(var(--sz) * var(--k) / -2);
-  border-radius: 50%; opacity: var(--o); filter: blur(var(--b)); mix-blend-mode: screen; will-change: transform;
-  background: radial-gradient(circle, color-mix(in srgb, var(--c) 45%, transparent) 0 60%, color-mix(in srgb, var(--c) 85%, transparent) 69%, transparent 73%);
+  border-radius: 50%; opacity: var(--o); will-change: transform;
+  /* el desenfoque va ya "pintado" en el degradado (sin filter: blur ni mix-blend, que son caros en capas fijas animadas) */
+  background: radial-gradient(circle, color-mix(in srgb, var(--c) 45%, transparent) 0 48%, color-mix(in srgb, var(--c) 85%, transparent) 63%, transparent 80%);
   transform: translate3d(var(--px, 0px), var(--py, 0px), 0); }
 @media (max-width: 760px) { .bokeh i { --k: 0.6; } }
 /* tarjetas elevadas: sombras por capas (contacto + ambiente + lejana) */
 .seq, .form, .tier, .tile, .quiz { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 2px 4px rgba(0, 0, 0, 0.45), 0 14px 30px rgba(0, 0, 0, 0.45), 0 44px 80px -24px rgba(0, 0, 0, 0.7); }
 .seq { transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
 /* efecto de enfoque: cada elemento llega desenfocado y se hace nítido al entrar */
-html.depth .rack { opacity: 0; filter: blur(9px); translate: 0 20px; scale: 0.985;
+html.depth .rack { opacity: 0; filter: blur(4px); translate: 0 20px; scale: 0.985;
   transition: opacity 0.8s ease, filter 0.8s ease, translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), scale 0.8s ease, transform 0.3s ease-out; transition-delay: var(--rd, 0s); }
 html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
 @media (prefers-reduced-motion: reduce) {
@@ -721,8 +724,8 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
   function buildRay() {
     var hero = document.querySelector('.hero'), seq = document.getElementById('seq');
     var W = document.documentElement.clientWidth;
-    ray.style.height = '0px';
-    var H = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    // altura de la página sin tocar estilos antes de medir (el rayo es absoluto y no cuenta en offsetHeight del body)
+    var H = Math.ceil(document.body.getBoundingClientRect().height + (window.pageYOffset || 0) + document.body.getBoundingClientRect().top);
     ray.style.height = H + 'px';
     ray.style.width = W + 'px';
     var mobile = W < 761, cx = W / 2;
