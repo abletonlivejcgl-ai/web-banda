@@ -825,7 +825,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     if (grainTried) return;
     grainTried = true;
     try {
-      var N = 256, c = document.createElement('canvas');
+      var N = 128, c = document.createElement('canvas');
       c.width = N; c.height = N;
       var x = c.getContext('2d'), im = x.createImageData(N, N), d = im.data, seed = 1234567;
       function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
@@ -836,7 +836,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       }
       x.putImageData(im, 0, 0);
       // motas más gruesas, escasas, para que no parezca ruido digital
-      for (var k = 0; k < 520; k++) {
+      for (var k = 0; k < 130; k++) {
         var px = Math.floor(rnd() * N), py = Math.floor(rnd() * N), sz = 2 + Math.floor(rnd() * 2);
         x.fillStyle = rnd() < 0.6 ? 'rgba(8,6,10,' + (0.25 + rnd() * 0.4).toFixed(2) + ')' : 'rgba(247,232,200,' + (0.15 + rnd() * 0.3).toFixed(2) + ')';
         x.fillRect(px, py, sz, sz);
@@ -869,7 +869,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       '<mask id="rayMask" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '"><rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#000"/>' +
       '<rect x="0" y="0" width="' + W + '" height="420" fill="url(#rayFade)"/><rect x="0" y="420" width="' + W + '" height="' + Math.max(0, H - 420) + '" fill="url(#rayFade2)"/></mask>';
     var grain = grainURL;
-    if (grain) defs.innerHTML += '<pattern id="rayGrain" patternUnits="userSpaceOnUse" width="256" height="256"><image href="' + grain + '" width="256" height="256"/></pattern>';
+    if (grain) defs.innerHTML += '<pattern id="rayGrain" patternUnits="userSpaceOnUse" width="128" height="128"><image href="' + grain + '" width="128" height="128"/></pattern>';
     svg.appendChild(defs);
     var grp = document.createElementNS(NS, 'g');
     grp.setAttribute('mask', 'url(#rayMask)');
@@ -895,8 +895,8 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
     ray.textContent = '';
     ray.appendChild(svg);
   }
-  buildRay();
   loadGrain(buildRay);
+  buildRay();
   window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(buildRay, 120); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildRay);
   if (window.ResizeObserver) new ResizeObserver(function () { clearTimeout(timer); timer = setTimeout(buildRay, 150); }).observe(document.body);
