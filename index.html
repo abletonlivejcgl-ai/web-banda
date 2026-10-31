@@ -592,6 +592,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
           <p class="hint">Elegimos las más pedidas para los próximos vídeos.</p>
           <div hidden><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></div>
           <input type="hidden" name="formulario" value="pide-cancion">
+          <input type="hidden" name="fuente" value="">
           <div class="field">
             <label for="s-cancion">Canción</label>
             <input id="s-cancion" name="cancion" type="text" required>
@@ -613,6 +614,7 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
           <p class="hint">Un correo solo cuando haya vídeo nuevo.</p>
           <div hidden><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></div>
           <input type="hidden" name="formulario" value="avisos-video">
+          <input type="hidden" name="fuente" value="">
           <div class="field">
             <label for="n-correo">Tu correo</label>
             <input id="n-correo" name="email" type="email" autocomplete="email" required>
@@ -1325,6 +1327,26 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       say('Mensaje seleccionado. Cópialo con Ctrl+C.');
     });
   });
+
+  // Fuente de la visita: ?fuente=instagram (o utm_source), si no, la web de origen, si no, "directo".
+  (function () {
+    var f = '';
+    try {
+      var q = new URLSearchParams(location.search);
+      f = q.get('fuente') || q.get('utm_source') || '';
+      if (f) { sessionStorage.setItem('mg_fuente', f); }
+      else { f = sessionStorage.getItem('mg_fuente') || ''; }
+    } catch (err) { /* sin almacenamiento: seguimos */ }
+    if (!f && document.referrer) {
+      try {
+        var h = new URL(document.referrer).hostname.replace(/^www\./, '');
+        if (h && h !== location.hostname.replace(/^www\./, '')) f = h;
+      } catch (err) { /* referrer raro */ }
+    }
+    f = (f || 'directo').toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40) || 'directo';
+    var campos = document.querySelectorAll('input[name=fuente]');
+    for (var i = 0; i < campos.length; i++) campos[i].value = f;
+  })();
 
   function wireForm(form, okText) {
     var status = form.querySelector('.fstatus');
