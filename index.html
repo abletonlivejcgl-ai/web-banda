@@ -91,8 +91,7 @@ h1 {
   text-shadow: 0.045em 0.045em 0 var(--pink);
 }
 .lead { font-size: 1.2rem; color: var(--soft); max-width: 44ch; margin: 28px 0 0; }
-.hero .lead { position: relative; z-index: 0; }
-.hero .lead::before { content: ''; position: absolute; z-index: -1; inset: -16px -26px -16px -26px; border-radius: 24px; background: rgba(10, 10, 12, 0.82); filter: blur(12px); pointer-events: none; }
+.hero .lead { text-shadow: 0 0 3px rgba(10,10,12,1), 0 0 6px rgba(10,10,12,1), 0 0 10px rgba(10,10,12,0.95), 0 0 18px rgba(10,10,12,0.9), 0 0 30px rgba(10,10,12,0.8); }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
 .btn {
   display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px;
@@ -416,7 +415,7 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 body { isolation: isolate; }
 .deco-ray { top: 0; left: 0; right: auto; width: 100%; height: 0; overflow: hidden; z-index: -1; filter: none; }
 .deco-ray svg { display: block; }
-.sec-head h2, .sec-head p, footer p, .hero .lead { text-shadow: 0 0 16px rgba(10, 10, 12, 0.9), 0 0 4px rgba(10, 10, 12, 0.7); }
+.sec-head h2, .sec-head p, footer p { text-shadow: 0 0 16px rgba(10, 10, 12, 0.9), 0 0 4px rgba(10, 10, 12, 0.7); }
 @media (max-width: 760px) { .deco-ray { opacity: 0.55; } }
 /* círculos de luz (bokeh) a varias distancias: fondo nítido-suave y primer plano muy desenfocado */
 .bokeh { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
