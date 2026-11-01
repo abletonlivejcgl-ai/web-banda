@@ -841,14 +841,14 @@ html.depth .rack.in { opacity: 1; filter: none; translate: none; scale: none; }
       function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
       for (var i = 0; i < N * N; i++) {
         var r = rnd(), a = rnd(), o = i * 4;
-        if (r < 0.58) { d[o] = 8; d[o + 1] = 6; d[o + 2] = 10; d[o + 3] = Math.round(a * a * 255 * 0.26); }
-        else { d[o] = 247; d[o + 1] = 232; d[o + 2] = 200; d[o + 3] = Math.round(a * a * 255 * 0.30); }
+        if (r < 0.58) { d[o] = 8; d[o + 1] = 6; d[o + 2] = 10; d[o + 3] = Math.round(a * a * 255 * 0.62); }
+        else { d[o] = 247; d[o + 1] = 232; d[o + 2] = 200; d[o + 3] = Math.round(a * a * 255 * 0.45); }
       }
       x.putImageData(im, 0, 0);
       // motas más gruesas, escasas, para que no parezca ruido digital
-      for (var k = 0; k < 40; k++) {
+      for (var k = 0; k < 130; k++) {
         var px = Math.floor(rnd() * N), py = Math.floor(rnd() * N), sz = 2 + Math.floor(rnd() * 2);
-        x.fillStyle = rnd() < 0.25 ? 'rgba(8,6,10,' + (0.25 + rnd() * 0.4).toFixed(2) + ')' : 'rgba(247,232,200,' + (0.15 + rnd() * 0.3).toFixed(2) + ')';
+        x.fillStyle = rnd() < 0.6 ? 'rgba(8,6,10,' + (0.25 + rnd() * 0.4).toFixed(2) + ')' : 'rgba(247,232,200,' + (0.15 + rnd() * 0.3).toFixed(2) + ')';
         x.fillRect(px, py, sz, sz);
       }
       // se codifica fuera del hilo principal y se usa como blob (antes: PNG de 220 KB en base64 dentro del SVG)
